@@ -4,7 +4,7 @@
 # 使用方法
 
 ```php
-composer require sl/micro-service
+composer require aprchen/easy-ms
 
 ```
 
