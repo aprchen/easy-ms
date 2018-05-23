@@ -14,7 +14,6 @@ define('BASE_PATH', dirname(__DIR__));
 define('APP_PATH', BASE_PATH . '/app');
 require_once BASE_PATH . '/vendor/autoload.php';
 $app = new MicroApp();
-$app->setAppPath(APP_PATH);
 $app->setConfigPath(BASE_PATH."/config.ini");
 $app->setBoots(
     new CollectionBootstrap(),

@@ -31,11 +31,6 @@ class MicroApp extends Micro
     protected $configPath;
 
     /**
-     * @var string
-     */
-    protected $appPath;
-
-    /**
      * @param BootstrapInterface[] $boots
      */
     public function setBoots(BootstrapInterface ... $boots): void
@@ -51,13 +46,6 @@ class MicroApp extends Micro
         $this->configPath = $configPath;
     }
 
-    /**
-     * @param string $appPath
-     */
-    public function setAppPath(string $appPath): void
-    {
-        $this->appPath = $appPath;
-    }
 
     public function handle($uri = null)
     {
