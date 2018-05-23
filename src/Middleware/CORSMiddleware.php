@@ -10,6 +10,7 @@
 namespace EasyMS\Middleware;
 
 use EasyMS\Constants\Methods;
+use EasyMS\MicroApp;
 use Phalcon\Events\Event;
 use Phalcon\Mvc\Micro;
 use Phalcon\Mvc\Micro\MiddlewareInterface;
@@ -122,7 +123,7 @@ class CORSMiddleware extends Plugin implements MiddlewareInterface
         $this->_allowedHeaders[] = $header;
     }
 
-    public function beforeHandleRoute(Event $event, App $app)
+    public function beforeHandleRoute(Event $event, MicroApp $app)
     {
         if (count($this->_allowedOrigins) == 0) {
             return;
