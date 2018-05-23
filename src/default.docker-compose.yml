@@ -1,0 +1,17 @@
+version: '2.1'
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+  php:
+     image: registry.cn-hangzhou.aliyuncs.com/sl/fpm:latest
+     container_name: micro-service-php
+     tty: true
+     volumes:
+        - ./:/var/www/html

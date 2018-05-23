@@ -1,0 +1,9 @@
+.idea/
+.phalcon/
+composer.lock
+vendor/
+public/
+app/
+config.ini
+docker-compose.yml
+nginx.conf

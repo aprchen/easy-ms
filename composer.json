@@ -1,0 +1,25 @@
+{
+    "name": "sl/micro-service",
+    "description": "miro-service",
+    "type": "library",
+    "authors": [
+        {
+            "name": "ott321",
+            "email": "ott321@yeah.net"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.11",
+        "phalcon/ide-stubs": "^3.3",
+        "phpunit/phpunit": "^6"
+    },
+    "autoload": {
+        "psr-4": {
+            "EasyMS\\": "src/"
+        }
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit -c phpunit.xml"
+    }
+}
