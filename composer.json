@@ -8,7 +8,7 @@
             "email": "ott321@yeah.net"
         }
     ],
-    "license": "Apache",
+    "license": "Apache-2.0",
     "require": {
         "php": ">=7.1",
         "ext-phalcon": "^3.2"
