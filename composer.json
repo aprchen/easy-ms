@@ -20,6 +20,11 @@
         }
     },
     "scripts": {
+        "post-root-package-install": [
+            "@php -r \"file_exists('config.ini') || copy('.src/default.config.ini', 'config.ini');\"",
+            "@php -r \"file_exists('docker-compose.yml') || copy('.src/docker-compose.yml', 'docker-compose.yml');\"",
+            "@php -r \"file_exists('nginx.conf') || copy('.src/nginx.conf', 'nginx.conf');\""
+        ],
         "test": "./vendor/bin/phpunit -c phpunit.xml"
     }
 }
