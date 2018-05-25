@@ -10,10 +10,12 @@
 namespace EasyMS;
 
 use EasyMS\Constants\Services;
+use EasyMS\Http\Dispatcher;
 use EasyMS\Http\ErrorHelper;
 use EasyMS\Http\FormatHelper;
 use EasyMS\Http\Request;
 use EasyMS\Http\Response;
+use EasyMS\Http\Router;
 use Phalcon\Di\FactoryDefault;
 use Phalcon\Events\Manager as EventsManager;
 
@@ -27,5 +29,7 @@ class MicroDi extends FactoryDefault
         $this->setShared(Services::FORMAT_HELPER, new FormatHelper);
         $this->setShared(Services::ERROR_HELPER, new ErrorHelper);
         $this->setShared(Services::EVENTS_MANAGER, new EventsManager());
+//        $this->setShared(Services::ROUTER,new Router());
+//        $this->setShared(Services::DISPATCHER,new Dispatcher());
     }
 }

@@ -11,7 +11,7 @@ namespace EasyMS\Constants;
 
 class Services
 {
-
+    const CONFIG = "config";
     const APPLICATION = "application";
     const DISPATCHER = "dispatcher";
     const ROUTER = "router";

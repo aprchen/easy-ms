@@ -4,6 +4,7 @@ composer.lock
 vendor/
 public/
 app/
+cache/
 config.ini
 docker-compose.yml
 nginx.conf
