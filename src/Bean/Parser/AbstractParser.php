@@ -2,7 +2,7 @@
 
 namespace EasyMS\Bean\Parser;
 
-use EasyMS\Bean\Resource\AnnotationResource;
+use EasyMS\Bean\Resource\ControllerAnnotationResource;
 use EasyMS\Mapping\ParserInterface;
 
 
@@ -20,16 +20,16 @@ abstract class AbstractParser implements ParserInterface
     /**
      * 注解解析资源
      *
-     * @var AnnotationResource
+     * @var ControllerAnnotationResource
      */
     protected $annotationResource;
 
     /**
      * AbstractParser constructor.
      *
-     * @param AnnotationResource $annotationResource
+     * @param ControllerAnnotationResource $annotationResource
      */
-    public function __construct(AnnotationResource $annotationResource)
+    public function __construct(ControllerAnnotationResource $annotationResource)
     {
         $this->annotationResource = $annotationResource;
     }

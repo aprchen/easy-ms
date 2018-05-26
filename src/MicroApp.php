@@ -13,13 +13,16 @@ use EasyMS\Bean\Collector\ControllerCollector;
 use EasyMS\Bean\Resource\ControllerAnnotationResource;
 use EasyMS\Boot\Boot;
 use EasyMS\Constants\Services;
-use EasyMS\Exception\ErrorCode;
-use EasyMS\Exception\RuntimeException;
+use EasyMS\Helper\PhpHelper;
 use EasyMS\Http\Response;
 use EasyMS\Http\Router;
 use EasyMS\Mapping\BootstrapInterface;
+use EasyMS\Middleware\CORSMiddleware;
+use EasyMS\Middleware\NotFoundMiddleware;
+use EasyMS\Middleware\OptionsResponseMiddleware;
 use Phalcon\Config;
 use Phalcon\DiInterface;
+use Phalcon\Events\Manager;
 use Phalcon\Mvc\Micro;
 use Phalcon\Cache\Backend\File;
 use Phalcon\Cache\Frontend\Output as FrontOutput;
@@ -84,89 +87,107 @@ class MicroApp extends Micro
     public function handle($uri = null)
     {
         try {
-            /** 扩展检查 */
-            if (!extension_loaded('phalcon')) {
-                exit("Please install phalcon extension. See https://phalconphp.com/zh/ \n");
-            }
+            PhpHelper::checkExtension('phalcon'); //扩展检查
             if (count($this->boots) > 0) {
                 $bootstrap = new Boot($this->boots);
                 $bootstrap->run($this, $this->getDI(), $this->getConfig());
             }
-            $this->notFound(function () {
-                throw new RuntimeException(ErrorCode::DATA_NOT_FOUND);
-            });
+            $this->initRoutes();
             parent::handle($uri);
-            /** @var Response $response */
-            $response = $this->getDI()->getShared(Services::RESPONSE);
-            // 返回值类型
-            $returnedValue = $this->getReturnedValue();
-            if ($returnedValue !== null) {
-                $response->setJsonContent($returnedValue);
+            $response = $this->getResponse();
+            $returned = $this->getReturnedValue();
+            if($returned !== null){
+                if(is_object($returned)  && method_exists($returned,'send')){ //如果是其他第三方的response 直接输出
+                    $returned->send();
+                }else{
+                    $response->setJsonContent($returned);
+                }
             }
         } catch (\Throwable $t) {
-            $di = $this->_dependencyInjector ?? new MicroDi();
-            $response = $di->getShared(Services::RESPONSE);
-            if (!$response || !$response instanceof Response) {
-                $response = new Response();
-            }
+            $response = $this->getResponse();
             $debug = isset($this->getConfig()->debug) ? $this->getConfig()->debug->enable : false;
             $response->setErrorContent($t, $debug);
         } finally {
-            /** @var $response Response */
             if (!$response->isSent()) {
                 $response->send();
             }
         }
     }
 
+    public static function getEventManager(): Manager
+    {
+        return MicroDi::getDefault()->getShared(Services::EVENTS_MANAGER);
+    }
+
+
+    public function initMiddleware(){
+        /** @var Manager $manager */
+        $manager = $this->getDI()->getShared(Services::EVENTS_MANAGER);
+        $manager->attach('micro',new NotFoundMiddleware());
+        $manager->attach('micro',new CORSMiddleware());
+        $manager->attach('micro',new OptionsResponseMiddleware());
+        $this->setEventsManager($manager);
+    }
+
+
+    private function initRoutes()
+    {
+        $controllers = $this->scanControllers("App\Controller");
+        /** @var Router $router */
+        $router = $this->getDI()->getShared(Services::ROUTER);
+        $this->_handlers = $router->initRoutes($controllers);
+    }
+
+
+    /**
+     * @return Response
+     */
+    public function getResponse(): Response
+    {
+        $response = $this->getDI()->getShared(Services::RESPONSE);
+        if (!$response || !$response instanceof Response) {
+            $response = new Response();
+        }
+        return $response;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getConfig()
     {
         return MicroDi::getDefault()->getShared(Services::CONFIG);
     }
 
     /**
-     *  echo "<pre>";
-     * $router = $this->getDI()->getShared(Services::ROUTER);
-     * $route = $router->add("/a");
-     * $this->_handlers[$route->getRouteId()] = [new IndexController(),"index"];
+     * @param string $namespace
+     * @return array
      */
-    public function scan()
+    public function scanControllers(string $namespace): array
     {
         if ($this->mode == self::MODE_DEV) {
-            $co = new ControllerAnnotationResource([]);
-            $co->addScanNamespace(['App\\Controller']);
-            $co->getDefinitions();
+            $co = new ControllerAnnotationResource();
+            $co->addScanNamespace([$namespace]);
+            $co->getDefinitions(); //扫描
             $controllers = ControllerCollector::getCollector();
-        }else{
+        } else {
             $cache = $this->getCache()->get("controllers");
-            if(empty($cache)){
-                $co = new ControllerAnnotationResource([]);
-                $co->addScanNamespace(['App\\Controller']);
-                $co->getDefinitions();
+            if (empty($cache)) {
+                $co = new ControllerAnnotationResource();
+                $co->addScanNamespace([$namespace]);
+                $co->getDefinitions($namespace);//扫描
                 $controllers = ControllerCollector::getCollector();
-                $this->getCache()->save("controllers",json_encode($controllers));
-            }else{
-                $controllers = json_decode($cache,true);
+                $this->getCache()->save("controllers", json_encode($controllers));
+            } else {
+                $controllers = json_decode($cache, true);
             }
         }
-
-        /** @var Router $router */
-        $router = $this->getDI()->getShared(Services::ROUTER);
-        foreach ($controllers as $class => $controller) {
-            $prefix = $controller['prefix'];
-            $points = $controller['points'] ?? [];
-            if (!empty($points)) {
-                foreach ($points as $action => $point) {
-                    $method = $point['method'];
-                    $pattern = empty($prefix) ? $point['path'] : $prefix . $point['path'];
-                    $path = "$class:$action";
-                    $route = $router->add($pattern, $path, $method);
-                    $this->_handlers[$route->getRouteId()] = [new $class, $action];
-                }
-            }
-        }
+        return $controllers;
     }
 
+    /**
+     * @return File
+     */
     protected function getCache()
     {
         // Cache the file for 2 days

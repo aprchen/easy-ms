@@ -17,11 +17,13 @@ class Response extends \Phalcon\Http\Response
 
         /** @var  $errorHelper ErrorHelper */
         $errorHelper = $this->getDI()->has(Services::ERROR_HELPER) ? $this->getDI()->get(Services::ERROR_HELPER) : null;
-
         $errorCode = $t->getCode();
         $statusCode = 500;
         $message = $t->getMessage();
-
+        if($message == "Matched route doesn't have an associated handler"){
+            $errorCode = ErrorCode::GENERAL_NOT_FOUND;
+            $message = "";
+        }
         if ($errorHelper && $errorHelper->has($errorCode)) {
             $defaultMessage = $errorHelper->get($errorCode);
             $statusCode = $defaultMessage['statusCode'];
@@ -33,6 +35,7 @@ class Response extends \Phalcon\Http\Response
             'code' => $errorCode,
             'message' => $message ?: 'Unspecified error',
         ];
+
         if ($t instanceof RuntimeException && $t->getUserInfo() != null) {
             $error['info'] = $t->getUserInfo();
         }

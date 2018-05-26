@@ -29,9 +29,9 @@ class Point
     public $path='';
 
     /**
-     * @var string
+     * @var array
      */
-    public $method = Methods::GET;
+    public $method = [Methods::GET,Methods::POST];
     /**
      * @var array
      */
@@ -70,9 +70,9 @@ class Point
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getMethod(): string
+    public function getMethod(): array
     {
         if(empty($this->method)){
             $this->method = Methods::GET;
@@ -81,9 +81,9 @@ class Point
     }
 
     /**
-     * @param string $method
+     * @param array $method
      */
-    public function setMethod(string $method): void
+    public function setMethod(array $method): void
     {
         $this->method = $method;
     }

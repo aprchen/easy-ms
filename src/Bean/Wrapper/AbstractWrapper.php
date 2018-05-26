@@ -3,7 +3,7 @@
 namespace EasyMS\Bean\Wrapper;
 
 use EasyMS\Bean\Parser\AbstractParser;
-use EasyMS\Bean\Resource\AnnotationResource;
+use EasyMS\Bean\Resource\ControllerAnnotationResource;
 use EasyMS\Mapping\WrapperInterface;
 
 
@@ -37,16 +37,16 @@ abstract class AbstractWrapper implements WrapperInterface
     /**
      * 注解资源
      *
-     * @var AnnotationResource
+     * @var ControllerAnnotationResource
      */
     protected $annotationResource;
 
     /**
      * AbstractWrapper constructor.
      *
-     * @param AnnotationResource $annotationResource
+     * @param ControllerAnnotationResource $annotationResource
      */
-    public function __construct(AnnotationResource $annotationResource)
+    public function __construct(ControllerAnnotationResource $annotationResource)
     {
         $this->annotationResource = $annotationResource;
     }
@@ -193,18 +193,6 @@ abstract class AbstractWrapper implements WrapperInterface
     private function isParseClass(array $annotations): bool
     {
         return $this->isParseClassAnnotations($annotations);
-    }
-
-
-
-    /**
-     * @param array $annotations
-     *
-     * @return bool
-     */
-    private function isParseMethod(array $annotations): bool
-    {
-        return $this->isParseMethodAnnotations($annotations) ;
     }
 
 

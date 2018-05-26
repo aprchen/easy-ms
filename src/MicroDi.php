@@ -17,7 +17,9 @@ use EasyMS\Http\Request;
 use EasyMS\Http\Response;
 use EasyMS\Http\Router;
 use Phalcon\Di\FactoryDefault;
+use Phalcon\Escaper;
 use Phalcon\Events\Manager as EventsManager;
+use Phalcon\Mvc\Url;
 
 class MicroDi extends FactoryDefault
 {
@@ -29,7 +31,13 @@ class MicroDi extends FactoryDefault
         $this->setShared(Services::FORMAT_HELPER, new FormatHelper);
         $this->setShared(Services::ERROR_HELPER, new ErrorHelper);
         $this->setShared(Services::EVENTS_MANAGER, new EventsManager());
-//        $this->setShared(Services::ROUTER,new Router());
-//        $this->setShared(Services::DISPATCHER,new Dispatcher());
+        $this->setShared(Services::ROUTER,new Router());
+        $this->setShared(Services::DISPATCHER,new Dispatcher());
+        $this->set(Services::ESCAPER,new Escaper());
+        $this->set(Services::URL,function (){
+            $url = new Url();
+            $url->setBaseUri('/');
+            return $url;
+        });
     }
 }
