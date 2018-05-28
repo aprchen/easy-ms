@@ -26,4 +26,10 @@ class PhpHelper
             trigger_error($message[$extension],E_USER_WARNING);
         }
     }
+
+
+    public static function arrayToLowString(array $array){
+        return strtolower(implode(',',$array));
+    }
+
 }

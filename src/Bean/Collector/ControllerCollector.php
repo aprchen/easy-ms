@@ -44,6 +44,8 @@ class ControllerCollector implements CollectorInterface
             $point['name'] = $objectAnnotation->getName();
             $point['path'] = $objectAnnotation->getPath();
             $point['scopes'] = $objectAnnotation->getScopes();
+            $point['description'] = $objectAnnotation->getDescription();
+            $point['version'] = $objectAnnotation->getVersion();
             self::$points[$className]['points'][$methodName] = $point;
         }
     }

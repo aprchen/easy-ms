@@ -11,6 +11,8 @@ namespace EasyMS;
 
 use EasyMS\Bean\Collector\ControllerCollector;
 use EasyMS\Bean\Resource\ControllerAnnotationResource;
+use EasyMS\Bean\Template\DataBean;
+use EasyMS\Bean\Template\DataTemplate;
 use EasyMS\Boot\Boot;
 use EasyMS\Constants\Services;
 use EasyMS\Helper\PhpHelper;
@@ -132,7 +134,7 @@ class MicroApp extends Micro
 
     private function initRoutes()
     {
-        $controllers = $this->scanControllers("App\Controller");
+        $controllers = $this->getControllers("App\\Controller");
         /** @var Router $router */
         $router = $this->getDI()->getShared(Services::ROUTER);
         $this->_handlers = $router->initRoutes($controllers);
@@ -163,7 +165,7 @@ class MicroApp extends Micro
      * @param string $namespace
      * @return array
      */
-    public function scanControllers(string $namespace): array
+    public function getControllers(string $namespace): array
     {
         if ($this->mode == self::MODE_DEV) {
             $co = new ControllerAnnotationResource();
@@ -197,6 +199,34 @@ class MicroApp extends Micro
         $output = new FrontOutput($frontendOptions);
         $dir = $this->getConfig()->application->cacheDir;
         return new File($output, ['cacheDir' => $dir]);
+    }
+
+    /**
+     * @param string $path
+     */
+    public function generateApiDocData(string $path)
+    {
+        $data = $this->getControllers("App\\Controller");
+        $dataTemplate = new DataTemplate();
+        $host = $this->getConfig()->host->self;
+        foreach ($data as $file=> $collection){
+            foreach ($collection['points'] as $method=>$point){
+                $bean = new DataBean();
+                $bean->setFilename($file);
+                $bean->setGroup($collection['group']);
+                $bean->setGroupTitle($collection['group']);
+                $bean->setType(PhpHelper::arrayToLowString($point['method']));
+                $bean->setPermission(['name'=>PhpHelper::arrayToLowString($point['scopes'])]);
+                $bean->setUrl($collection['prefix'].$point['path']);
+                $bean->setName($point['name']);
+                $bean->setTitle($point['name']);
+                $bean->setDescription($point['description']);
+                $bean->setVersion($point['version']);
+                $bean->setSampleRequest(['uri'=>$host.$collection['prefix'].$point['path']]);
+                $dataTemplate->addBeans($bean);
+            }
+        }
+        $dataTemplate->getApiDocTemplate($path);
     }
 
 

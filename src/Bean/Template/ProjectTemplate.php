@@ -9,7 +9,9 @@
 
 namespace EasyMS\Bean\Template;
 
-class DocDataTemplate
+class ProjectTemplate
 {
+
+
 
 }

@@ -38,6 +38,16 @@ class Point
     public $scopes = [Scopes::UNAUTHORIZED];
 
     /**
+     * @var string
+     */
+    public $description = '';
+
+    /**
+     * @var string
+     */
+    public $version = '0.0.0';
+
+    /**
      * @return string
      */
     public function getName(): string
@@ -104,6 +114,37 @@ class Point
         $this->scopes = $scopes;
     }
 
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersion(): string
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param string $version
+     */
+    public function setVersion(string $version): void
+    {
+        $this->version = $version;
+    }
 
 
 }

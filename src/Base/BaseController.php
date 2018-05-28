@@ -7,7 +7,7 @@
  * @author April2 <ott321@yeah.net>
  */
 
-namespace EasyMS;
+namespace EasyMS\Base;
 
 
 class BaseController
