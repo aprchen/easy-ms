@@ -9,14 +9,14 @@
 
 namespace EasyMS\Middleware;
 
+use EasyMS\Base\BasePlugin;
 use EasyMS\Constants\Methods;
 use EasyMS\MicroApp;
 use Phalcon\Events\Event;
 use Phalcon\Mvc\Micro;
 use Phalcon\Mvc\Micro\MiddlewareInterface;
-use Phalcon\Mvc\User\Plugin;
 
-class CORSMiddleware extends Plugin implements MiddlewareInterface
+class CORSMiddleware extends BasePlugin implements MiddlewareInterface
 {
     static $ALL_ORIGINS = ['*'];
     static $DEFAULT_HEADERS = ['Content-Type', 'X-Requested-With', 'Authorization'];

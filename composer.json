@@ -10,6 +10,10 @@
     ],
     "license": "Apache-2.0",
     "require": {
+        "monolog/monolog": "^1.23",
+        "doctrine/annotations": "^1.6",
+        "phalcon/incubator": "^3.3",
+        "symfony/filesystem": "^4.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.11",
@@ -18,14 +22,20 @@
     },
     "autoload": {
         "psr-4": {
-            "EasyMS\\": "src/"
+            "EasyMS\\": "src/",
+            "App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "EasyMsTest\\": "test/Cases"
         }
     },
     "scripts": {
         "post-root-package-install": [
-            "@php -r \"file_exists('config.ini') || copy('.src/default.config.ini', 'config.ini');\"",
-            "@php -r \"file_exists('docker-compose.yml') || copy('.src/docker-compose.yml', 'docker-compose.yml');\"",
-            "@php -r \"file_exists('nginx.conf') || copy('.src/nginx.conf', 'nginx.conf');\""
+            "@php -r \"file_exists('config.ini') || copy('./src/default.config.ini', 'config.ini');\"",
+            "@php -r \"file_exists('docker-compose.yml') || copy('./src/docker-compose.yml', 'docker-compose.yml');\"",
+            "@php -r \"file_exists('nginx.conf') || copy('./src/nginx.conf', 'nginx.conf');\""
         ],
         "test": "./vendor/bin/phpunit -c phpunit.xml"
     }
