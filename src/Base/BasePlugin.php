@@ -10,7 +10,9 @@
 namespace EasyMS\Base;
 
 
-class BasePlugin
+use Phalcon\Mvc\User\Plugin;
+
+class BasePlugin extends Plugin
 {
 
 }

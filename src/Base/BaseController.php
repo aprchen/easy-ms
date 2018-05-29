@@ -10,7 +10,9 @@
 namespace EasyMS\Base;
 
 
-class BaseController
+use Phalcon\Mvc\Controller;
+
+class BaseController extends Controller
 {
 
 }

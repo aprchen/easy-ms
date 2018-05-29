@@ -15,10 +15,13 @@ use EasyMS\Bean\Template\DataBean;
 use EasyMS\Bean\Template\DataTemplate;
 use EasyMS\Boot\Boot;
 use EasyMS\Constants\Services;
+use EasyMS\Exception\ErrorCode;
+use EasyMS\Exception\RuntimeException;
 use EasyMS\Helper\PhpHelper;
 use EasyMS\Http\Response;
 use EasyMS\Http\Router;
 use EasyMS\Mapping\BootstrapInterface;
+use EasyMS\Middleware\AclMiddleware;
 use EasyMS\Middleware\CORSMiddleware;
 use EasyMS\Middleware\NotFoundMiddleware;
 use EasyMS\Middleware\OptionsResponseMiddleware;
@@ -128,13 +131,14 @@ class MicroApp extends Micro
         $manager->attach('micro',new NotFoundMiddleware());
         $manager->attach('micro',new CORSMiddleware());
         $manager->attach('micro',new OptionsResponseMiddleware());
+        $manager->attach('micro',new AclMiddleware());
         $this->setEventsManager($manager);
     }
 
 
     private function initRoutes()
     {
-        $controllers = $this->getControllers("App\\Controller");
+        $controllers = $this->getControllers();
         /** @var Router $router */
         $router = $this->getDI()->getShared(Services::ROUTER);
         $this->_handlers = $router->initRoutes($controllers);
@@ -162,29 +166,38 @@ class MicroApp extends Micro
     }
 
     /**
-     * @param string $namespace
      * @return array
      */
-    public function getControllers(string $namespace): array
+    public function getControllers(): array
     {
-        if ($this->mode == self::MODE_DEV) {
-            $co = new ControllerAnnotationResource();
-            $co->addScanNamespace([$namespace]);
-            $co->getDefinitions(); //扫描
-            $controllers = ControllerCollector::getCollector();
-        } else {
-            $cache = $this->getCache()->get("controllers");
-            if (empty($cache)) {
+
+        try {
+            $namespace = $this->getConfig()->application->controllerNamespace ?? null;
+            if(!$namespace){
+               throw new RuntimeException(ErrorCode::POST_DATA_NOT_PROVIDED,'Warning: controllerNamespace parameters not provided or invalid');
+            }
+            if ($this->mode == self::MODE_DEV) {
                 $co = new ControllerAnnotationResource();
                 $co->addScanNamespace([$namespace]);
-                $co->getDefinitions($namespace);//扫描
+                $co->getDefinitions(); //扫描
                 $controllers = ControllerCollector::getCollector();
-                $this->getCache()->save("controllers", json_encode($controllers));
             } else {
-                $controllers = json_decode($cache, true);
+                $cache = $this->getCache()->get("controllers");
+                if (empty($cache)) {
+                    $co = new ControllerAnnotationResource();
+                    $co->addScanNamespace([$namespace]);
+                    $co->getDefinitions();//扫描
+                    $controllers = ControllerCollector::getCollector();
+                    $this->getCache()->save("controllers", json_encode($controllers));
+                } else {
+                    $controllers = json_decode($cache, true);
+                }
             }
+            return $controllers;
+        }catch (\Throwable $t){
+            trigger_error($t->getMessage().$t->getTraceAsString());
+            return[];
         }
-        return $controllers;
     }
 
     /**
@@ -206,7 +219,7 @@ class MicroApp extends Micro
      */
     public function generateApiDocData(string $path)
     {
-        $data = $this->getControllers("App\\Controller");
+        $data = $this->getControllers();
         $dataTemplate = new DataTemplate();
         $host = $this->getConfig()->host->self;
         foreach ($data as $file=> $collection){
