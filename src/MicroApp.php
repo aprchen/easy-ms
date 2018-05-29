@@ -37,6 +37,11 @@ class MicroApp extends Micro
     /** @var BootstrapInterface[] */
     protected $boots = [];
 
+    /**
+     * ['namespace'=>'path']
+     * @var []
+     */
+    protected $scans = [];
 
     /**
      * @param BootstrapInterface[] $boots
@@ -65,6 +70,24 @@ class MicroApp extends Micro
         }
         return $this->_dependencyInjector;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getScans()
+    {
+        return $this->scans;
+    }
+
+    /**
+     * @param mixed $scans
+     */
+    public function setScans($scans): void
+    {
+        $this->scans = $scans;
+    }
+
+
 
     public function handle($uri = null)
     {
@@ -148,21 +171,21 @@ class MicroApp extends Micro
     {
 
         try {
-            $namespace = $this->getConfig()->application->controllerNamespace ?? null;
-            if(!$namespace){
+            $namespace = $this->scans;
+            if(empty($namespace)){
                throw new RuntimeException(ErrorCode::POST_DATA_NOT_PROVIDED,'Warning: controllerNamespace parameters not provided or invalid');
             }
             $dev = $this->getConfig()->application->dev ?? false;
             if ($dev) {
                 $co = new ControllerAnnotationResource();
-                $co->addScanNamespace([$namespace]);
+                $co->addScanNamespace($namespace);
                 $co->getDefinitions(); //扫描
                 $controllers = ControllerCollector::getCollector();
             } else {
                 $cache = $this->getCache()->get("controllers");
                 if (empty($cache)) {
                     $co = new ControllerAnnotationResource();
-                    $co->addScanNamespace([$namespace]);
+                    $co->addScanNamespace($namespace);
                     $co->getDefinitions();//扫描
                     $controllers = ControllerCollector::getCollector();
                     $this->getCache()->save("controllers", json_encode($controllers));
