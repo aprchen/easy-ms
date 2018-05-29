@@ -91,6 +91,7 @@ class ControllerAnnotationResource
 
         // 获取扫描的PHP文件
         $classNames     = $this->registerLoaderAndScanBean();
+
         $fileClassNames = $this->scanFilePhpClass();
         $classNames     = array_merge($classNames, $fileClassNames);
 
@@ -246,7 +247,7 @@ class ControllerAnnotationResource
     {
         $phpClass = [];
         foreach ($this->scanNamespaces as $namespace => $dir) {
-            AnnotationRegistry::registerLoader(function ($class) {
+            AnnotationRegistry::registerLoader(function ($class) {          //注册注解
                 if (class_exists($class) || interface_exists($class)) {
                     return true;
                 }

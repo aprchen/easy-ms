@@ -48,6 +48,11 @@ class Point
     public $version = '0.0.0';
 
     /**
+     * @var int
+     */
+    public $cache = 0;
+
+    /**
      * @return string
      */
     public function getName(): string
@@ -144,6 +149,22 @@ class Point
     public function setVersion(string $version): void
     {
         $this->version = $version;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCache(): int
+    {
+        return $this->cache;
+    }
+
+    /**
+     * @param int $cache
+     */
+    public function setCache(int $cache): void
+    {
+        $this->cache = $cache;
     }
 
 

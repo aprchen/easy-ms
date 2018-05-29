@@ -12,7 +12,6 @@
     "require": {
         "monolog/monolog": "^1.23",
         "doctrine/annotations": "^1.6",
-        "phalcon/incubator": "^3.3",
         "symfony/filesystem": "^4.0"
     },
     "require-dev": {
@@ -22,8 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "EasyMS\\": "src/",
-            "App\\": "app/"
+            "EasyMS\\": "src/"
         }
     },
     "autoload-dev": {
