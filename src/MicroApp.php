@@ -21,7 +21,6 @@ use EasyMS\Helper\PhpHelper;
 use EasyMS\Http\Response;
 use EasyMS\Http\Router;
 use EasyMS\Mapping\BootstrapInterface;
-use EasyMS\Middleware\AclMiddleware;
 use EasyMS\Middleware\CORSMiddleware;
 use EasyMS\Middleware\NotFoundMiddleware;
 use EasyMS\Middleware\OptionsResponseMiddleware;
@@ -34,12 +33,6 @@ use Phalcon\Cache\Frontend\Output as FrontOutput;
 
 class MicroApp extends Micro
 {
-
-    const MODE_DEV = "development";
-
-    const MODE_PRO = "production";
-
-    private $mode = self::MODE_DEV;
 
     /** @var BootstrapInterface[] */
     protected $boots = [];
@@ -60,22 +53,6 @@ class MicroApp extends Micro
     public function setConfig(Config $config)
     {
         return $this->getDI()->setShared(Services::CONFIG, $config);
-    }
-
-    /**
-     * @return string
-     */
-    public function getMode(): string
-    {
-        return $this->mode;
-    }
-
-    /**
-     * @param string $mode
-     */
-    public function setMode(string $mode): void
-    {
-        $this->mode = $mode;
     }
 
     /**
@@ -131,7 +108,6 @@ class MicroApp extends Micro
         $manager->attach('micro',new NotFoundMiddleware());
         $manager->attach('micro',new CORSMiddleware());
         $manager->attach('micro',new OptionsResponseMiddleware());
-        $manager->attach('micro',new AclMiddleware());
         $this->setEventsManager($manager);
     }
 
@@ -176,7 +152,8 @@ class MicroApp extends Micro
             if(!$namespace){
                throw new RuntimeException(ErrorCode::POST_DATA_NOT_PROVIDED,'Warning: controllerNamespace parameters not provided or invalid');
             }
-            if ($this->mode == self::MODE_DEV) {
+            $dev = $this->getConfig()->application->dev ?? false;
+            if ($dev) {
                 $co = new ControllerAnnotationResource();
                 $co->addScanNamespace([$namespace]);
                 $co->getDefinitions(); //扫描
