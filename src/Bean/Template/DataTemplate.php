@@ -34,7 +34,7 @@ class DataTemplate
     public function getApiDocTemplate(string $path,$type = 'js')
     {
         $f = new Filesystem();
-        if($type == 'js'){
+        if($type == 'json'){
             $head = "[";
             $foot = "]";
             $filename = "api_data.json";
