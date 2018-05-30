@@ -89,9 +89,6 @@ class Point
      */
     public function getMethod(): array
     {
-        if(empty($this->method)){
-            $this->method = Methods::GET;
-        }
         return $this->method;
     }
 

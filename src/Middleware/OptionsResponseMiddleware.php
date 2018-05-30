@@ -9,13 +9,13 @@
 
 namespace EasyMS\Middleware;
 
+use EasyMS\Mapping\MiddlewareInterface;
+use EasyMS\MicroApp;
 use Phalcon\Events\Event;
-use Phalcon\Mvc\Micro;
-use Phalcon\Mvc\Micro\MiddlewareInterface;
 
 class OptionsResponseMiddleware implements MiddlewareInterface
 {
-    public function beforeHandleRoute(Event $event, Micro $app)
+    public function beforeHandleRoute(Event $event, MicroApp $app)
     {
 
         if($app->request->isHead()){  //心跳检测
@@ -32,7 +32,7 @@ class OptionsResponseMiddleware implements MiddlewareInterface
         }
     }
 
-    public function call(Micro $api)
+    public function call(MicroApp $api)
     {
         return true;
     }

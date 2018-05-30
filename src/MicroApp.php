@@ -223,6 +223,9 @@ class MicroApp extends Micro
         $dataTemplate = new DataTemplate();
         $host = $this->getConfig()->host->self;
         foreach ($data as $file=> $collection){
+            if(!isset($collection['points'])){
+                continue;
+            }
             foreach ($collection['points'] as $method=>$point){
                 $bean = new DataBean();
                 $bean->setFilename($file);

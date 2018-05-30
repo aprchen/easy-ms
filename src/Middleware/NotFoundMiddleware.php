@@ -11,8 +11,9 @@ namespace EasyMS\Middleware;
 
 use EasyMS\Exception\ErrorCode;
 use EasyMS\Exception\RuntimeException;
-use Phalcon\Mvc\Micro;
-use Phalcon\Mvc\Micro\MiddlewareInterface;
+use EasyMS\Mapping\MiddlewareInterface;
+use EasyMS\MicroApp;
+
 
 class NotFoundMiddleware implements MiddlewareInterface
 {
@@ -21,9 +22,14 @@ class NotFoundMiddleware implements MiddlewareInterface
         throw new RuntimeException(ErrorCode::GENERAL_NOT_FOUND);
     }
 
-    public function call(Micro $api)
-    {
-        return true;
-    }
 
+    /**
+     * Calls the middleware
+     *
+     * @param MicroApp $app
+     */
+    public function call(MicroApp $app)
+    {
+        // TODO: Implement call() method.
+    }
 }

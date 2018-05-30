@@ -104,6 +104,17 @@ abstract class AbstractWrapper implements WrapperInterface
     }
 
     /**
+     * @param array $annotations
+     *
+     * @return bool
+     */
+    private function isParseMethod(array $annotations): bool
+    {
+        return $this->isParseMethodAnnotations($annotations);
+    }
+
+
+    /**
      * 解析方法注解
      *
      * @param string            $className
@@ -113,6 +124,10 @@ abstract class AbstractWrapper implements WrapperInterface
     private function parseMethodAnnotations(string $className, \ReflectionMethod $method, array $methodAnnotations)
     {
         $methodName = $method->getName();
+        $isWithoutMethodAnnotation = empty($methodAnnotations) || !isset($methodAnnotations[$methodName]);
+        if ($isWithoutMethodAnnotation || !$this->isParseMethod($methodAnnotations[$methodName])) {
+            return;
+        }
         // 循环方法注解解析
         foreach ($methodAnnotations[$methodName] as $methodAnnotationAry) {
             foreach ($methodAnnotationAry as $methodAnnotation) {

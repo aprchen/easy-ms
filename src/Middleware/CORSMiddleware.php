@@ -11,10 +11,9 @@ namespace EasyMS\Middleware;
 
 use EasyMS\Base\BasePlugin;
 use EasyMS\Constants\Methods;
+use EasyMS\Mapping\MiddlewareInterface;
 use EasyMS\MicroApp;
 use Phalcon\Events\Event;
-use Phalcon\Mvc\Micro;
-use Phalcon\Mvc\Micro\MiddlewareInterface;
 
 class CORSMiddleware extends BasePlugin implements MiddlewareInterface
 {
