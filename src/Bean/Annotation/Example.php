@@ -45,7 +45,7 @@ class Example
      */
     public $content = '';
 
-    public $type = ExampleType::TYPE_JSON;
+    public $type = '';
 
 
 

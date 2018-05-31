@@ -23,7 +23,7 @@ class Param extends BaseBean
      * @var string
      * 数据类型
      */
-    public $type = 'string';
+    public $type = '';
 
     /**
      * @var bool
