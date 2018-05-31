@@ -16,22 +16,63 @@ class ProjectBean extends BaseBean
 {
 
     /** @var string */
-    protected $name;
+    protected $title = '';
+    /**
+     * @var string
+     */
+    protected $url = '';
 
     /**
      * @var string
      */
-    protected $version;
+    protected $name ='';
 
     /**
      * @var string
      */
-    protected $url;
-
+    protected $version = '0.0.0';
     /**
      * @var string
      */
-    protected $time;
+    protected $description = '';
+    /**
+     * @var bool
+     */
+    protected $sampleUrl = false;
+
+    protected $defaultVersion = '0.0.0';
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param string $url
+     */
+    public function setUrl(string $url): void
+    {
+        $this->url = $url;
+    }
 
     /**
      * @return string
@@ -68,35 +109,49 @@ class ProjectBean extends BaseBean
     /**
      * @return string
      */
-    public function getUrl(): string
+    public function getDescription(): string
     {
-        return $this->url;
+        return $this->description;
     }
 
     /**
-     * @param string $url
+     * @param string $description
      */
-    public function setUrl(string $url): void
+    public function setDescription(string $description): void
     {
-        $this->url = $url;
+        $this->description = $description;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSampleUrl(): bool
+    {
+        return $this->sampleUrl;
+    }
+
+    /**
+     * @param bool $sampleUrl
+     */
+    public function setSampleUrl(bool $sampleUrl): void
+    {
+        $this->sampleUrl = $sampleUrl;
     }
 
     /**
      * @return string
      */
-    public function getTime(): string
+    public function getDefaultVersion(): string
     {
-        return $this->time;
+        return $this->defaultVersion;
     }
 
     /**
-     * @param string $time
+     * @param string $defaultVersion
      */
-    public function setTime(string $time): void
+    public function setDefaultVersion(string $defaultVersion): void
     {
-        $this->time = $time;
+        $this->defaultVersion = $defaultVersion;
     }
-
-
 
 }

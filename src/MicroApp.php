@@ -13,6 +13,8 @@ use EasyMS\Bean\Collector\ControllerCollector;
 use EasyMS\Bean\Resource\ControllerAnnotationResource;
 use EasyMS\Bean\Template\DataBean;
 use EasyMS\Bean\Template\DataTemplate;
+use EasyMS\Bean\Template\ProjectBean;
+use EasyMS\Bean\Template\ProjectTemplate;
 use EasyMS\Boot\Boot;
 use EasyMS\Constants\Services;
 use EasyMS\Exception\ErrorCode;
@@ -28,8 +30,6 @@ use Phalcon\Config;
 use Phalcon\DiInterface;
 use Phalcon\Events\Manager;
 use Phalcon\Mvc\Micro;
-use Phalcon\Cache\Backend\File;
-use Phalcon\Cache\Frontend\Output as FrontOutput;
 
 class MicroApp extends Micro
 {
@@ -208,32 +208,41 @@ class MicroApp extends Micro
             return;
         }
         $path = $this->getConfig()->application->cacheDir;
-        if(file_exists($path."api_data.js")){
+        if(file_exists($path.DataTemplate::FILE_NAME)){
             return;
         }
         $data = $this->getControllers();
         $dataTemplate = new DataTemplate();
+        $projectTemplate=  new ProjectTemplate();
         foreach ($data as $file=> $collection){
             if(!isset($collection['points'])){
                 continue;
             }
             foreach ($collection['points'] as $method=>$point){
                 $bean = new DataBean();
+                $bean->setExamples($point['examples'] ?? []);
+                $bean->setParameter($point['parameter'] ?? []);
                 $bean->setFilename($file);
-                $bean->setGroup($collection['group']);
+                $bean->setGroup($collection['group']??'');
                 $bean->setGroupTitle($collection['group']);
                 $bean->setType(PhpHelper::arrayToLowString($point['method']));
                 $bean->setPermission(['name'=>PhpHelper::arrayToLowString($point['scopes'])]);
-                $bean->setUrl($collection['prefix'].$point['path']);
+                $bean->setUrl($point['path']);
                 $bean->setName($point['name']);
                 $bean->setTitle($point['name']);
                 $bean->setDescription($point['description']);
                 $bean->setVersion($point['version']);
-                //$bean->setSampleRequest(['uri'=>$host.$collection['prefix'].$point['path']]);
                 $dataTemplate->addBeans($bean);
             }
         }
-        $dataTemplate->getApiDocTemplate($path."api_data.js");
+        $projectBean = new ProjectBean();
+        $projectBean->setDescription($this->getConfig()->application->description ?? '');
+        $projectBean->setTitle($this->getConfig()->application->title ?? '');
+        $projectBean->setName($this->getConfig()->application->name ?? '');
+        $projectBean->setUrl($this->getConfig()->host->self ?? '');
+        $projectBean->setVersion($this->getConfig()->application->version ?? '0.0.0');
+        $projectTemplate->getTemplate($projectBean,$path);
+        $dataTemplate->getApiDocTemplate($path);
     }
 
 

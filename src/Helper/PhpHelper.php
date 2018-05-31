@@ -68,4 +68,8 @@ class PhpHelper
     }
 
 
+    public static function replaceDoubleSlashes(string $url){
+        return str_replace("//", "/", $url);
+    }
+
 }

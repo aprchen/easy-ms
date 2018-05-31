@@ -16,6 +16,8 @@ use Symfony\Component\Filesystem\Filesystem;
 class DataTemplate
 {
 
+    const FILE_NAME = "api_data.js";
+
     /**
      * @var DataBean[]
      */
@@ -28,30 +30,32 @@ class DataTemplate
     }
 
     /**
-     * apidoc js,json
-     * @param string $file
+     * @param string $path
      */
-    public function getApiDocTemplate(string $file)
+    public function getApiDocTemplate(string $path)
     {
         $f = new Filesystem();
-        $type = PhpHelper::getExtension($file);
-        if($type == 'json'){
-            $head = "[";
-            $foot = "]";
-        }else{
-            $head = "define({ \"api\": [";
-            $foot = "] });";
-        }
+        $head = "define({ \"api\": [";
+        $foot = "] });";
+        $file = $path.self::FILE_NAME;
         if($f->exists($file)){
             $f->remove($file);
         }
         $f->appendToFile($file,$head);
         $count = count($this->beans);
         foreach ($this->beans as $key=>$bean) {
+            $data = $bean->toArray();
+            $data = array_filter($data);
+            if(isset($data['examples'])){
+                $examples = $data['examples'];
+                unset($data['examples']);
+                $data = array_merge($data,$examples);
+            }
+            $json = json_encode($data,JSON_UNESCAPED_UNICODE);
             if($key == $count-1){
-                $f->appendToFile($file, $bean->toJson());
+                $f->appendToFile($file, $json);
             }else{
-                $f->appendToFile($file, $bean->toJson().',');
+                $f->appendToFile($file, $json.',');
             }
         }
         $f->appendToFile($file,$foot);

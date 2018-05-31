@@ -2,9 +2,10 @@
 
 namespace EasyMS\Bean\Wrapper;
 
+use EasyMS\Bean\Annotation\Example;
 use EasyMS\Bean\Annotation\Group;
+use EasyMS\Bean\Annotation\Param;
 use EasyMS\Bean\Annotation\Point;
-use Phalcon\Mvc\Controller;
 
 
 /**
@@ -34,6 +35,8 @@ class ControllerWrapper extends AbstractWrapper
      */
     protected $methodAnnotations = [
         Point::class,
+        Example::class,
+        Param::class
     ];
 
     /**

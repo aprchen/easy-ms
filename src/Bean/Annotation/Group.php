@@ -9,12 +9,14 @@
 
 namespace EasyMS\Bean\Annotation;
 
+use EasyMS\Base\BaseBean;
+
 /**
  * Class Group
  * @package EasyMS\Bean\Annotation
  * @Annotation
  */
-class Group
+class Group extends BaseBean
 {
     /**
      * @var string

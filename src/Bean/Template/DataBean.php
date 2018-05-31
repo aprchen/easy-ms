@@ -37,6 +37,15 @@ class DataBean extends BaseBean
 
     protected $description = '';
 
+    /**
+     * @var array
+     */
+    protected $parameter = [];
+
+    /**
+     * @var array
+     */
+    protected $examples = [];
 
     /**
      * @return string
@@ -199,5 +208,38 @@ class DataBean extends BaseBean
     {
         $this->description = $description;
     }
+
+    /**
+     * @return array
+     */
+    public function getParameter(): array
+    {
+        return $this->parameter;
+    }
+
+    /**
+     * @param array $parameter
+     */
+    public function setParameter(array $parameter): void
+    {
+        $this->parameter = $parameter;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExamples(): array
+    {
+        return $this->examples;
+    }
+
+    /**
+     * @param array $examples
+     */
+    public function setExamples(array $examples): void
+    {
+        $this->examples = $examples;
+    }
+
 
 }

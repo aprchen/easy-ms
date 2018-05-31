@@ -40,12 +40,11 @@ class Router extends BaseRouter implements RouterInterface
         $result = [];
         if(!empty($controllers)){
             foreach ($controllers as $class => $controller) {
-                $prefix = $controller['prefix'];
                 $points = $controller['points'] ?? [];
                 if (!empty($points)) {
                     foreach ($points as $action => $point) {
                         $method = $point['method'];
-                        $pattern = empty($prefix) ? $point['path'] : $prefix . $point['path'];
+                        $pattern = $point['path'] ;
                         $path = "$class:$action";
                         $route = $this->add($pattern, $path, $method);
                         $result[$route->getRouteId()] = [new $class, $action];

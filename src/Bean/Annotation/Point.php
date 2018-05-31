@@ -8,6 +8,7 @@
  */
 
 namespace EasyMS\Bean\Annotation;
+use EasyMS\Base\BaseBean;
 use EasyMS\Constants\Methods;
 use EasyMS\Constants\Scopes;
 
@@ -16,7 +17,7 @@ use EasyMS\Constants\Scopes;
  * @package EasyMS\Bean\Annotation
  * @Annotation
  */
-class Point
+class Point extends BaseBean
 {
     /**
      * @var string

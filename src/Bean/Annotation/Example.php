@@ -9,51 +9,117 @@
 
 namespace EasyMS\Bean\Annotation;
 
+use EasyMS\Base\BaseBean;
+use EasyMS\Constants\ExampleType;
+
 /**
+ *
+ * Example(
+ *     header=ET::HEADER_SUCCESS,
+ *     type=ET::TYPE_JSON,
+ *     title="Error-Response:",
+ *     content="HTTP/1.1 404 Not Found
+ *     {
+ *          "error": "UserNotFound"
+ *      }"
+ * )
  * Class Example
  * @package EasyMS\Bean\Annotation
  * @Annotation
  */
 class Example
 {
+
+    const KEY = "examples";
+
     /**
      * @var string
      */
-    public $stats;
+    public $header = '';
     /**
      * @var string
      */
-    public $json;
+    public $title = '';
+    /**
+     * @var string
+     */
+    public $content = '';
+
+    public $type = ExampleType::TYPE_JSON;
+
+
 
     /**
      * @return string
      */
-    public function getStats(): string
+    public function getHeader(): string
     {
-        return $this->stats;
+        return $this->header;
     }
 
     /**
-     * @param string $stats
+     * @param string $header
      */
-    public function setStats(string $stats): void
+    public function setHeader(string $header): void
     {
-        $this->stats = $stats;
+        $this->header = $header;
     }
 
     /**
      * @return string
      */
-    public function getJson(): string
+    public function getTitle(): string
     {
-        return $this->json;
+        return $this->title;
     }
 
     /**
-     * @param string $json
+     * @param string $title
      */
-    public function setJson(string $json): void
+    public function setTitle(string $title): void
     {
-        $this->json = $json;
+        $this->title = $title;
     }
+
+    /**
+     * @return string
+     */
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    /**
+     * @param string $content
+     */
+    public function setContent(string $content): void
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType(string $type): void
+    {
+        $this->type = $type;
+    }
+
+    public function toArray(): array
+    {
+        $res = [];
+        $res[self::KEY]['title'] = $this->getTitle();
+        $res[self::KEY]['content'] = $this->getContent();
+        $res[self::KEY]['type'] = $this->getType();
+        return $res;
+    }
+
 }

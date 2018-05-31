@@ -9,14 +9,24 @@
 
 namespace EasyMS\Bean\Collector;
 
+use EasyMS\Bean\Annotation\Example;
 use EasyMS\Bean\Annotation\Group;
+use EasyMS\Bean\Annotation\Param;
 use EasyMS\Bean\Annotation\Point;
+use EasyMS\Constants\ExampleType;
+use EasyMS\Helper\PhpHelper;
 use EasyMS\Mapping\CollectorInterface;
 
 class ControllerCollector implements CollectorInterface
 {
 
     protected static $points = [];
+
+    const POINT_KEY = 'points';
+
+    const EXAMPLE_KEY = 'examples';
+
+    const PARAM_KEY = 'parameter';
 
     /**
      * @param string $className
@@ -39,14 +49,30 @@ class ControllerCollector implements CollectorInterface
             self::$points[$className]['group'] = $objectAnnotation->getName();
         }
         if($objectAnnotation instanceof Point){
-            $point = [];
-            $point['method'] = $objectAnnotation->getMethod();
-            $point['name'] = $objectAnnotation->getName();
-            $point['path'] = $objectAnnotation->getPath();
-            $point['scopes'] = $objectAnnotation->getScopes();
-            $point['description'] = $objectAnnotation->getDescription();
-            $point['version'] = $objectAnnotation->getVersion();
-            self::$points[$className]['points'][$methodName] = $point;
+            self::$points[$className][self::POINT_KEY][$methodName]['method'] = $objectAnnotation->getMethod();
+            self::$points[$className][self::POINT_KEY][$methodName]['name'] = $objectAnnotation->getName();
+            $prefix = self::$points[$className]['prefix'] ?? '';
+            $url = $prefix.$objectAnnotation->getPath();
+            $url = PhpHelper::replaceDoubleSlashes($url);
+            self::$points[$className][self::POINT_KEY][$methodName]['path'] = $url;
+            self::$points[$className][self::POINT_KEY][$methodName]['scopes'] = $objectAnnotation->getScopes();
+            self::$points[$className][self::POINT_KEY][$methodName]['description'] = $objectAnnotation->getDescription();
+            self::$points[$className][self::POINT_KEY][$methodName]['version'] = $objectAnnotation->getVersion();
+        }
+        if($objectAnnotation instanceof Example){
+            $example = [];
+            $example['content'] = $objectAnnotation->getContent();
+            $example['title'] = $objectAnnotation->getTitle();
+            $example['type'] = $objectAnnotation->getType();
+            if($objectAnnotation->getHeader() == ExampleType::HEADER_PARAMETER){
+                self::$points[$className][self::POINT_KEY][$methodName][self::PARAM_KEY]['fields']['examples'] = $example;
+            }else{
+                $header = $objectAnnotation->getHeader();
+                self::$points[$className][self::POINT_KEY][$methodName][self::EXAMPLE_KEY][$header]['examples'][] = $example;
+            }
+        }
+        if($objectAnnotation instanceof Param){
+            self::$points[$className][self::POINT_KEY][$methodName][self::PARAM_KEY]['fields']['Parameter'][] = $objectAnnotation->toArray();
         }
     }
 
