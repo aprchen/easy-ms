@@ -207,7 +207,7 @@ class MicroApp extends Micro
         if(!$flag){
             return;
         }
-        $path = $this->getConfig()->application->cacheDir;
+        $path = $this->getConfig()->application->apiDocDir;
         if(file_exists($path.DataTemplate::FILE_NAME)){
             return;
         }

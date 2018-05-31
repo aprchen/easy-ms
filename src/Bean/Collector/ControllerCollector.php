@@ -61,6 +61,9 @@ class ControllerCollector implements CollectorInterface
             self::$points[$className][self::POINT_KEY][$methodName]['cache'] = $objectAnnotation->getCache();
         }
         if($objectAnnotation instanceof Example){
+            if($objectAnnotation->getContent() === ''){
+                return;
+            }
             $example = [];
             $example['content'] = $objectAnnotation->getContent();
             $example['title'] = $objectAnnotation->getTitle();
@@ -73,7 +76,9 @@ class ControllerCollector implements CollectorInterface
             }
         }
         if($objectAnnotation instanceof Param){
-            self::$points[$className][self::POINT_KEY][$methodName][self::PARAM_KEY]['fields']['Parameter'][] = $objectAnnotation->toArray();
+            if($objectAnnotation->getField() !==''){
+                self::$points[$className][self::POINT_KEY][$methodName][self::PARAM_KEY]['fields']['Parameter'][] = $objectAnnotation->toArray();
+            }
         }
     }
 

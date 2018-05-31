@@ -27,7 +27,7 @@ class Param extends BaseBean
 
     /**
      * @var bool
-     * 是否必填
+     * 是否可选
      */
     public $optional = false;
 

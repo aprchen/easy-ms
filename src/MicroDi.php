@@ -32,7 +32,6 @@ class MicroDi extends FactoryDefault
         $this->setShared(Services::ERROR_HELPER, new ErrorHelper);
         $this->setShared(Services::EVENTS_MANAGER, new EventsManager());
         $this->setShared(Services::ROUTER,new Router());
-        $this->setShared(Services::DISPATCHER,new Dispatcher());
         $this->set(Services::ESCAPER,new Escaper());
         $this->set(Services::URL,function (){
             $url = new Url();

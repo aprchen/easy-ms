@@ -10,7 +10,7 @@
 namespace EasyMS\Bean\Annotation;
 
 use EasyMS\Base\BaseBean;
-use EasyMS\Constants\ExampleType;
+use EasyMS\Constants\ExampleType as ET;
 
 /**
  *
@@ -35,7 +35,7 @@ class Example
     /**
      * @var string
      */
-    public $header = '';
+    public $header = ET::HEADER_SUCCESS;
     /**
      * @var string
      */
@@ -45,7 +45,7 @@ class Example
      */
     public $content = '';
 
-    public $type = '';
+    public $type = ET::TYPE_JSON;
 
 
 
