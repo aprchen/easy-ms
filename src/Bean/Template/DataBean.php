@@ -37,7 +37,6 @@ class DataBean extends BaseBean
 
     protected $description = '';
 
-    protected $sampleRequest = [['uri'=>'']];
 
     /**
      * @return string
@@ -200,22 +199,5 @@ class DataBean extends BaseBean
     {
         $this->description = $description;
     }
-
-    /**
-     * @return array
-     */
-    public function getSampleRequest(): array
-    {
-        return $this->sampleRequest;
-    }
-
-    /**
-     * @param array $sampleRequest
-     */
-    public function setSampleRequest(array $sampleRequest): void
-    {
-        $this->sampleRequest = $sampleRequest;
-    }
-
 
 }
