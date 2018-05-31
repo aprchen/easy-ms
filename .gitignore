@@ -8,5 +8,4 @@ cache
 config.ini
 docker-compose.yml
 nginx.conf
-nginx.doc.conf
 apidoc/
