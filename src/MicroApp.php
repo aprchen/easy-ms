@@ -182,16 +182,16 @@ class MicroApp extends Micro
                 $co->getDefinitions(); //扫描
                 $controllers = ControllerCollector::getCollector();
             } else {
-                $cache = $this->getCache()->get("controllers");
-                if (empty($cache)) {
+                $dir = $this->getConfig()->application->cacheDir;
+                $cache = $dir.'controllers.php';
+                if (!file_exists($cache)) {
                     $co = new ControllerAnnotationResource();
                     $co->addScanNamespace($namespace);
                     $co->getDefinitions();//扫描
                     $controllers = ControllerCollector::getCollector();
-                    $this->getCache()->save("controllers", json_encode($controllers));
-                } else {
-                    $controllers = json_decode($cache, true);
+                    PhpHelper::saveDataToFile($cache,$controllers);
                 }
+                $controllers = PhpHelper::getDataToFile($cache);
             }
             return $controllers;
         }catch (\Throwable $t){
@@ -201,27 +201,12 @@ class MicroApp extends Micro
     }
 
     /**
-     * @return File
-     */
-    protected function getCache()
-    {
-        // Cache the file for 2 days
-        $frontendOptions = [
-            "lifetime" => 172800,
-        ];
-        $output = new FrontOutput($frontendOptions);
-        $dir = $this->getConfig()->application->cacheDir;
-        return new File($output, ['cacheDir' => $dir]);
-    }
-
-    /**
      * @param string $path
      */
     public function generateApiDocData(string $path)
     {
         $data = $this->getControllers();
         $dataTemplate = new DataTemplate();
-        $host = $this->getConfig()->host->self;
         foreach ($data as $file=> $collection){
             if(!isset($collection['points'])){
                 continue;
@@ -238,7 +223,7 @@ class MicroApp extends Micro
                 $bean->setTitle($point['name']);
                 $bean->setDescription($point['description']);
                 $bean->setVersion($point['version']);
-                $bean->setSampleRequest(['uri'=>$host.$collection['prefix'].$point['path']]);
+                //$bean->setSampleRequest(['uri'=>$host.$collection['prefix'].$point['path']]);
                 $dataTemplate->addBeans($bean);
             }
         }
