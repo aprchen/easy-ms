@@ -24,8 +24,10 @@ class ProjectTemplate
         if($f->exists($file)){
             $f->remove($file);
         }
+        $data = $bean->toArray();
+        $json = json_encode(array_filter($data),JSON_UNESCAPED_UNICODE);
         $f->appendToFile($file,$head);
-        $f->appendToFile($file,$bean->toJson());
+        $f->appendToFile($file,$json);
         $f->appendToFile($file,$foot);
     }
 
