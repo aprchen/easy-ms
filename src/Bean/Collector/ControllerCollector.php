@@ -58,6 +58,7 @@ class ControllerCollector implements CollectorInterface
             self::$points[$className][self::POINT_KEY][$methodName]['scopes'] = $objectAnnotation->getScopes();
             self::$points[$className][self::POINT_KEY][$methodName]['description'] = $objectAnnotation->getDescription();
             self::$points[$className][self::POINT_KEY][$methodName]['version'] = $objectAnnotation->getVersion();
+            self::$points[$className][self::POINT_KEY][$methodName]['cache'] = $objectAnnotation->getCache();
         }
         if($objectAnnotation instanceof Example){
             $example = [];
