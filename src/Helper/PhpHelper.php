@@ -1,4 +1,5 @@
 <?php
+
 namespace EasyMS\Helper;
 
 
@@ -21,41 +22,50 @@ class PhpHelper
         if (is_array($extension)) {
             foreach ($extension as $ext) {
                 if (!extension_loaded($ext)) {
-                    trigger_error($message[$extension],E_USER_WARNING);
+                    trigger_error($message[$extension], E_USER_WARNING);
                     break;
                 }
             }
         } elseif (!extension_loaded($extension)) {
-            trigger_error($message[$extension],E_USER_WARNING);
+            trigger_error($message[$extension], E_USER_WARNING);
         }
     }
 
 
-    public static function arrayToLowString(array $array){
-        return strtolower(implode(',',$array));
+    public static function arrayToLowString(array $array)
+    {
+        return strtolower(implode(',', $array));
     }
 
 
-    public static function saveDataToFile(string $file,array $data){
+    public static function saveDataToFile(string $file, array $data)
+    {
         $f = new Filesystem();
-        if($f->exists($file)){
+        if ($f->exists($file)) {
             $f->remove($file);
         }
-        $text='<?php $array =  '.var_export($data,true).';';
-        $f->appendToFile($file,$text);
+        $text = '<?php $array =  ' . var_export($data, true) . ';';
+        $f->appendToFile($file, $text);
     }
 
 
-    public static function getDataToFile(string $file){
+    public static function getDataToFile(string $file)
+    {
         $f = new Filesystem();
-        if(!$f->exists($file)){
+        if (!$f->exists($file)) {
             trigger_error(sprintf("Waring: %s can`t find !"));
         }
         include realpath($file);
-        if(isset($array)){
+        if (isset($array)) {
             return $array;
         }
         return false;
     }
+
+    public static function getExtension(string $filename):string
+    {
+        return substr(strrchr($filename, '.'), 1);
+    }
+
 
 }

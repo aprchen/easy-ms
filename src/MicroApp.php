@@ -98,6 +98,7 @@ class MicroApp extends Micro
                 $bootstrap->run($this, $this->getDI(), $this->getConfig());
             }
             $this->initRoutes();
+            $this->generateApiDocData();
             parent::handle($uri);
             $response = $this->getResponse();
             $returned = $this->getReturnedValue();
@@ -200,11 +201,16 @@ class MicroApp extends Micro
         }
     }
 
-    /**
-     * @param string $path
-     */
-    public function generateApiDocData(string $path)
+    protected function generateApiDocData()
     {
+        $flag = $this->getConfig()->application->doc ?? false;
+        if(!$flag){
+            return;
+        }
+        $path = $this->getConfig()->application->cacheDir;
+        if(file_exists($path."api_data.js")){
+            return;
+        }
         $data = $this->getControllers();
         $dataTemplate = new DataTemplate();
         foreach ($data as $file=> $collection){
@@ -227,7 +233,7 @@ class MicroApp extends Micro
                 $dataTemplate->addBeans($bean);
             }
         }
-        $dataTemplate->getApiDocTemplate($path);
+        $dataTemplate->getApiDocTemplate($path."api_data.js");
     }
 
 

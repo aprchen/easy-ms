@@ -10,6 +10,7 @@
 namespace EasyMS\Bean\Template;
 
 
+use EasyMS\Helper\PhpHelper;
 use Symfony\Component\Filesystem\Filesystem;
 
 class DataTemplate
@@ -28,22 +29,19 @@ class DataTemplate
 
     /**
      * apidoc js,json
-     * @param string $path
-     * @param string $type
+     * @param string $file
      */
-    public function getApiDocTemplate(string $path,$type = 'js')
+    public function getApiDocTemplate(string $file)
     {
         $f = new Filesystem();
+        $type = PhpHelper::getExtension($file);
         if($type == 'json'){
             $head = "[";
             $foot = "]";
-            $filename = "api_data.json";
         }else{
             $head = "define({ \"api\": [";
             $foot = "] });";
-            $filename = "api_data.js";
         }
-        $file = $path . $filename;
         if($f->exists($file)){
             $f->remove($file);
         }
