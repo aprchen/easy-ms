@@ -10,6 +10,7 @@
 namespace EasyMS\Http;
 
 
+use Phalcon\Mvc\Micro\LazyLoader;
 use Phalcon\Mvc\Router as BaseRouter;
 use Phalcon\Mvc\RouterInterface;
 
@@ -47,7 +48,7 @@ class Router extends BaseRouter implements RouterInterface
                         $pattern = $point['path'] ;
                         $path = "$class:$action";
                         $route = $this->add($pattern, $path, $method);
-                        $result[$route->getRouteId()] = [new $class, $action];
+                        $result[$route->getRouteId()] = [new LazyLoader($class), $action];
                     }
                 }
             }
