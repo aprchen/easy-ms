@@ -33,6 +33,6 @@ class ScopeRoles
     /**
      * 所有
      */
-    const ALL = self::ADMINISTRATOR.','.self::MANAGER.','.self::ORDINARY.','.self::UNAUTHORIZED;
+    const ALL = [self::ADMINISTRATOR,self::MANAGER,self::ORDINARY,self::UNAUTHORIZED];
 
 }
