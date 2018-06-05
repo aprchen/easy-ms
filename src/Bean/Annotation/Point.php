@@ -50,7 +50,7 @@ class Point extends BaseBean
         }
 
         if (isset($values['name'])) {
-            $this->method = $values['name'];
+            $this->name = $values['name'];
         }
     }
 
