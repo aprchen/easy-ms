@@ -34,9 +34,13 @@ class MicroDi extends FactoryDefault
         $this->setShared(Services::FORMAT_HELPER, new FormatHelper);
         $this->setShared(Services::ERROR_HELPER, new ErrorHelper);
         $this->setShared(Services::EVENTS_MANAGER, new EventsManager());
-        $this->setShared(Services::ROUTER,new Router());
         $this->setShared(Services::PHQL_QUERY_PARSER,new PhqlQueryParser());
         $this->setShared(Services::URL_QUERY_PARSER,new UrlQueryParser());
+        $this->setShared(Services::ROUTER,function (){
+            $router = new Router();
+            $router->removeExtraSlashes(true);
+            return $router;
+        });
         $this->setShared(Services::FRACTAL_MANAGER, function () {
             $fractal = new FractalManager;
             $fractal->setSerializer(new CustomSerializer);
