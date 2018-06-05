@@ -10,7 +10,10 @@
 namespace EasyMS;
 
 use EasyMS\Constants\Services;
-use EasyMS\Http\Dispatcher;
+use EasyMS\Fractal\CustomSerializer;
+use EasyMS\Fractal\Query\QueryParsers\PhqlQueryParser;
+use EasyMS\Fractal\Query\QueryParsers\UrlQueryParser;
+use League\Fractal\Manager as FractalManager;
 use EasyMS\Http\ErrorHelper;
 use EasyMS\Http\FormatHelper;
 use EasyMS\Http\Request;
@@ -32,6 +35,13 @@ class MicroDi extends FactoryDefault
         $this->setShared(Services::ERROR_HELPER, new ErrorHelper);
         $this->setShared(Services::EVENTS_MANAGER, new EventsManager());
         $this->setShared(Services::ROUTER,new Router());
+        $this->setShared(Services::PHQL_QUERY_PARSER,new PhqlQueryParser());
+        $this->setShared(Services::URL_QUERY_PARSER,new UrlQueryParser());
+        $this->setShared(Services::FRACTAL_MANAGER, function () {
+            $fractal = new FractalManager;
+            $fractal->setSerializer(new CustomSerializer);
+            return $fractal;
+        });
         $this->set(Services::ESCAPER,new Escaper());
         $this->set(Services::URL,function (){
             $url = new Url();

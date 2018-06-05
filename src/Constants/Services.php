@@ -46,6 +46,7 @@ class Services
     const URL_QUERY_PARSER = "urlQueryParser";
     const ERROR_HELPER = "errorHelper";
     const FORMAT_HELPER = "formatHelper";
+    const FRACTAL_MANAGER = 'fractalManager';
     const PHQL_QUERY_PARSER = 'phqlQueryParser';
-
+    const URL_QUERY = 'urlQuery';
 }
