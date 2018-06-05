@@ -11,6 +11,7 @@ namespace EasyMS\Bean\Annotation;
 
 use EasyMS\Base\BaseBean;
 use EasyMS\Constants\Methods;
+
 /**
  * Class Point
  * @package EasyMS\Bean\Annotation
@@ -22,17 +23,17 @@ class Point extends BaseBean
     /**
      * @var string
      */
-    public $name='';
+    public $name = '';
 
     /**
      * @var string
      */
-    public $path='';
+    public $path = '';
 
     /**
      * @var array
      */
-    public $method = [Methods::GET,Methods::POST];
+    public $method = [Methods::GET, Methods::POST];
 
     public function __construct(array $values)
     {
@@ -42,6 +43,14 @@ class Point extends BaseBean
 
         if (isset($values['path'])) {
             $this->path = $values['path'];
+        }
+
+        if (isset($values['method'])) {
+            $this->method = $values['method'];
+        }
+
+        if (isset($values['name'])) {
+            $this->method = $values['name'];
         }
     }
 

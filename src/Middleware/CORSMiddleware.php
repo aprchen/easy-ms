@@ -171,11 +171,11 @@ class CORSMiddleware extends BasePlugin implements MiddlewareInterface
     /**
      * Calls the middleware
      *
-     * @param Micro $application
+     * @param MicroApp $application
      *
      * @returns bool
      */
-    public function call(Micro $application)
+    public function call(MicroApp $application)
     {
         return true;
     }

@@ -27,9 +27,10 @@ class NotFoundMiddleware implements MiddlewareInterface
      * Calls the middleware
      *
      * @param MicroApp $app
+     * @return bool
      */
     public function call(MicroApp $app)
     {
-        // TODO: Implement call() method.
+        return true;
     }
 }
