@@ -26,6 +26,7 @@ use EasyMS\Constants\ExampleType as ET;
  * Class Example
  * @package EasyMS\Bean\Annotation
  * @Annotation
+ * @Target("METHOD")
  */
 class Example
 {

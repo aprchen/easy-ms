@@ -31,11 +31,6 @@
         }
     },
     "scripts": {
-        "post-autoload-dump": [
-            "php -r \"file_exists('config/config.ini') || copy('config/default.config.ini', 'config/config.ini');\"",
-            "php -r \"file_exists('docker-compose.yml') || copy('config/default.docker-compose.yml', 'docker-compose.yml');\"",
-            "php -r \"file_exists('config/nginx.conf') || copy('config/default.nginx.conf', 'config/nginx.conf');\""
-        ],
         "test": "./vendor/bin/phpunit -c phpunit.xml"
     }
 }

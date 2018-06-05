@@ -11,10 +11,12 @@ namespace EasyMS\Bean\Annotation;
 
 use EasyMS\Base\BaseBean;
 
+
 /**
  * Class Group
  * @package EasyMS\Bean\Annotation
  * @Annotation
+ * @Target("CLASS")
  */
 class Group extends BaseBean
 {
@@ -25,7 +27,22 @@ class Group extends BaseBean
     /**
      * @var string
      */
-    public $path= '';
+    public $prefix= '';
+
+    public function __construct(array $values)
+    {
+        if (isset($values['value'])) {
+            $this->prefix = $values['value'];
+        }
+
+        if (isset($values['prefix'])) {
+            $this->prefix = $values['prefix'];
+        }
+
+        if (isset($values['path'])) {
+            $this->prefix = $values['path'];
+        }
+    }
 
     /**
      * @return string
@@ -36,28 +53,10 @@ class Group extends BaseBean
     }
 
     /**
-     * @param string $name
-     */
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    /**
      * @return string
      */
-    public function getPath(): string
+    public function getPrefix(): string
     {
-        return $this->path;
+        return $this->prefix;
     }
-
-    /**
-     * @param string $path
-     */
-    public function setPath(string $path): void
-    {
-        $this->path = $path;
-    }
-
-
 }

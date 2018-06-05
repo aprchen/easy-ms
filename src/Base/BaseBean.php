@@ -30,18 +30,4 @@ class BaseBean
     {
         return $this->toJson();
     }
-
-    public function __construct($array = [])
-    {
-        if(!empty($array)){
-            $varList = $this->toArray();
-            foreach ($varList as $key => $value)
-            {
-                if(!is_numeric($key) && key_exists($key,$array)){
-                    $this->$key = $array[$key];
-                }
-            }
-        }
-    }
-
 }

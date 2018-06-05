@@ -8,14 +8,14 @@
  */
 
 namespace EasyMS\Bean\Annotation;
+
 use EasyMS\Base\BaseBean;
 use EasyMS\Constants\Methods;
-use EasyMS\Constants\Scopes;
-
 /**
  * Class Point
  * @package EasyMS\Bean\Annotation
  * @Annotation
+ * @Target("METHOD")
  */
 class Point extends BaseBean
 {
@@ -33,25 +33,17 @@ class Point extends BaseBean
      * @var array
      */
     public $method = [Methods::GET,Methods::POST];
-    /**
-     * @var array
-     */
-    public $scopes = [Scopes::UNAUTHORIZED];
 
-    /**
-     * @var string
-     */
-    public $description = '';
+    public function __construct(array $values)
+    {
+        if (isset($values['value'])) {
+            $this->path = $values['value'];
+        }
 
-    /**
-     * @var string
-     */
-    public $version = '0.0.0';
-
-    /**
-     * @var int
-     */
-    public $cache = 0;
+        if (isset($values['path'])) {
+            $this->path = $values['path'];
+        }
+    }
 
     /**
      * @return string
@@ -100,70 +92,4 @@ class Point extends BaseBean
     {
         $this->method = $method;
     }
-
-    /**
-     * @return array
-     */
-    public function getScopes(): array
-    {
-        return $this->scopes;
-    }
-
-    /**
-     * @param array $scopes
-     */
-    public function setScopes(array $scopes): void
-    {
-        $this->scopes = $scopes;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription(string $description): void
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * @return string
-     */
-    public function getVersion(): string
-    {
-        return $this->version;
-    }
-
-    /**
-     * @param string $version
-     */
-    public function setVersion(string $version): void
-    {
-        $this->version = $version;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCache(): int
-    {
-        return $this->cache;
-    }
-
-    /**
-     * @param int $cache
-     */
-    public function setCache(int $cache): void
-    {
-        $this->cache = $cache;
-    }
-
-
 }

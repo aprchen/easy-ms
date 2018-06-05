@@ -2,10 +2,14 @@
 
 namespace EasyMS\Bean\Wrapper;
 
+use EasyMS\Bean\Annotation\Cache;
+use EasyMS\Bean\Annotation\Description;
 use EasyMS\Bean\Annotation\Example;
 use EasyMS\Bean\Annotation\Group;
 use EasyMS\Bean\Annotation\Param;
 use EasyMS\Bean\Annotation\Point;
+use EasyMS\Bean\Annotation\Scopes;
+use EasyMS\Bean\Annotation\Version;
 
 
 /**
@@ -36,7 +40,11 @@ class ControllerWrapper extends AbstractWrapper
     protected $methodAnnotations = [
         Point::class,
         Example::class,
-        Param::class
+        Param::class,
+        Cache::class,
+        Description::class,
+        Scopes::class,
+        Version::class
     ];
 
     /**
@@ -69,6 +77,6 @@ class ControllerWrapper extends AbstractWrapper
      */
     public function isParseMethodAnnotations(array $annotations): bool
     {
-        return isset($annotations[Point::class]);
+        return true;
     }
 }

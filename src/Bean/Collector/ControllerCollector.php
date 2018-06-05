@@ -9,10 +9,14 @@
 
 namespace EasyMS\Bean\Collector;
 
+use EasyMS\Bean\Annotation\Cache;
+use EasyMS\Bean\Annotation\Description;
 use EasyMS\Bean\Annotation\Example;
 use EasyMS\Bean\Annotation\Group;
 use EasyMS\Bean\Annotation\Param;
 use EasyMS\Bean\Annotation\Point;
+use EasyMS\Bean\Annotation\Scopes;
+use EasyMS\Bean\Annotation\Version;
 use EasyMS\Constants\ExampleType;
 use EasyMS\Helper\PhpHelper;
 use EasyMS\Mapping\CollectorInterface;
@@ -45,8 +49,9 @@ class ControllerCollector implements CollectorInterface
     )
     {
         if($objectAnnotation instanceof Group){
-            self::$points[$className]['prefix'] = $objectAnnotation->getPath();
+            self::$points[$className]['prefix'] = $objectAnnotation->getPrefix();
             self::$points[$className]['group'] = $objectAnnotation->getName();
+            return;
         }
         if($objectAnnotation instanceof Point){
             self::$points[$className][self::POINT_KEY][$methodName]['method'] = $objectAnnotation->getMethod();
@@ -55,10 +60,23 @@ class ControllerCollector implements CollectorInterface
             $url = $prefix.$objectAnnotation->getPath();
             $url = PhpHelper::replaceDoubleSlashes($url);
             self::$points[$className][self::POINT_KEY][$methodName]['path'] = $url;
-            self::$points[$className][self::POINT_KEY][$methodName]['scopes'] = $objectAnnotation->getScopes();
-            self::$points[$className][self::POINT_KEY][$methodName]['description'] = $objectAnnotation->getDescription();
+            return;
+        }
+        if($objectAnnotation instanceof Version){
             self::$points[$className][self::POINT_KEY][$methodName]['version'] = $objectAnnotation->getVersion();
-            self::$points[$className][self::POINT_KEY][$methodName]['cache'] = $objectAnnotation->getCache();
+            return;
+        }
+        if($objectAnnotation instanceof Cache){
+            self::$points[$className][self::POINT_KEY][$methodName]['cache'] = $objectAnnotation->getValue();
+            return;
+        }
+        if($objectAnnotation instanceof Scopes){
+            self::$points[$className][self::POINT_KEY][$methodName]['scopes'] = $objectAnnotation->getValues();
+            return;
+        }
+        if($objectAnnotation instanceof Description){
+            self::$points[$className][self::POINT_KEY][$methodName]['description'] = $objectAnnotation->getValue();
+            return;
         }
         if($objectAnnotation instanceof Example){
             if($objectAnnotation->getContent() === ''){
@@ -74,11 +92,13 @@ class ControllerCollector implements CollectorInterface
                 $header = $objectAnnotation->getHeader();
                 self::$points[$className][self::POINT_KEY][$methodName][self::EXAMPLE_KEY][$header]['examples'][] = $example;
             }
+            return;
         }
         if($objectAnnotation instanceof Param){
             if($objectAnnotation->getField() !==''){
                 self::$points[$className][self::POINT_KEY][$methodName][self::PARAM_KEY]['fields']['Parameter'][] = $objectAnnotation->toArray();
             }
+            return;
         }
     }
 

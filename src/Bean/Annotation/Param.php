@@ -15,6 +15,7 @@ use EasyMS\Base\BaseBean;
  * Class Params
  * @package EasyMS\Bean\Annotation
  * @Annotation
+ * @Target("METHOD")
  */
 class Param extends BaseBean
 {
