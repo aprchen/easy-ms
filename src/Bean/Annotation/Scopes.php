@@ -20,7 +20,7 @@ class Scopes
     /**
      * @var array
      */
-    private $values = [\EasyMS\Constants\Scopes::UNAUTHORIZED];
+    private $values = [\EasyMS\Constants\ScopeRoles::UNAUTHORIZED];
 
     /**
      * @return array

@@ -10,7 +10,7 @@
 namespace EasyMS\Constants;
 
 
-class Scopes
+class ScopeRoles
 {
 
     /**
@@ -29,5 +29,10 @@ class Scopes
      * 未登录用户
      */
     const UNAUTHORIZED= 'unauthorized';
+
+    /**
+     * 所有
+     */
+    const ALL = self::ADMINISTRATOR.','.self::MANAGER.','.self::ORDINARY.','.self::UNAUTHORIZED;
 
 }
