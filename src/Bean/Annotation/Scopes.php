@@ -42,11 +42,11 @@ class Scopes
     public function __construct(array $values)
     {
         if (isset($values['value'])) {
-            $this->values[] = $values['value'];
-        }
-
-        if (isset($values['values'])) {
-            $this->values = $values['values'];
+            if(is_array($values['value'])){
+                $this->values = $values['value'];
+            }else{
+                $this->values[] = $values['value'];
+            }
         }
     }
 

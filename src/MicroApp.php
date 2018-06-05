@@ -172,7 +172,7 @@ class MicroApp extends Micro
     {
 
         try {
-            $namespace = $this->scans;
+            $namespace = $this->getScans();
             if(empty($namespace)){
                throw new RuntimeException(ErrorCode::POST_DATA_NOT_PROVIDED,'Warning: controllerNamespace parameters not provided or invalid');
             }
