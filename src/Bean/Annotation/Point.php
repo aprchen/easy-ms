@@ -33,7 +33,7 @@ class Point extends BaseBean
     /**
      * @var array
      */
-    public $method = [Methods::GET, Methods::POST];
+    public $method = [Methods::GET];
 
     public function __construct(array $values)
     {
