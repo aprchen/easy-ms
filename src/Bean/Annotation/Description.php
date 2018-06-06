@@ -35,4 +35,13 @@ class Description
     {
         return $this->value;
     }
+
+    /**
+     * @param mixed|string $value
+     */
+    public function setValue($value): void
+    {
+        $this->value = $value;
+    }
+
 }
