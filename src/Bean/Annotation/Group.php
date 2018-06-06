@@ -42,6 +42,9 @@ class Group extends BaseBean
         if (isset($values['path'])) {
             $this->prefix = $values['path'];
         }
+        if (isset($values['name'])) {
+            $this->name = $values['name'];
+        }
     }
 
     /**

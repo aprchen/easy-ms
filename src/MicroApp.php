@@ -223,7 +223,7 @@ class MicroApp extends Micro
                 $bean->setExamples($point['examples'] ?? []);
                 $bean->setParameter($point['parameter'] ?? []);
                 $bean->setFilename($file);
-                $bean->setGroup($collection['group']??'');
+                $bean->setGroup($collection['group']);
                 $bean->setGroupTitle($collection['group']);
                 $bean->setType(PhpHelper::arrayToLowString($point['method']));
                 $bean->setPermission(['name'=>PhpHelper::arrayToLowString($point['scopes'])]);
@@ -231,7 +231,7 @@ class MicroApp extends Micro
                 $bean->setName($point['name']??'');
                 $bean->setTitle($point['name']??'');
                 $bean->setDescription($point['description']??'');
-                $bean->setVersion($point['version'] ??'');
+                $bean->setVersion($point['version'] ?? '0.0.0');
                 $dataTemplate->addBeans($bean);
             }
         }
