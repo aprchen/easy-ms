@@ -88,7 +88,6 @@ class MicroApp extends Micro
     }
 
 
-
     public function handle($uri = null)
     {
         try {
@@ -102,10 +101,10 @@ class MicroApp extends Micro
             parent::handle($uri);
             $response = $this->getResponse();
             $returned = $this->getReturnedValue();
-            if($returned !== null){
-                if(is_object($returned)  && method_exists($returned,'send')){ //如果是其他第三方的response 直接输出
+            if ($returned !== null) {
+                if (is_object($returned) && method_exists($returned, 'send')) { //如果是其他第三方的response 直接输出
                     $returned->send();
-                }else{
+                } else {
                     $response->setJsonContent($returned);
                 }
             }
@@ -126,12 +125,13 @@ class MicroApp extends Micro
     }
 
 
-    public function initMiddleware(){
+    public function initMiddleware()
+    {
         /** @var Manager $manager */
         $manager = $this->getDI()->getShared(Services::EVENTS_MANAGER);
-        $manager->attach('micro',new NotFoundMiddleware());
-        $manager->attach('micro',new CORSMiddleware());
-        $manager->attach('micro',new OptionsResponseMiddleware());
+        $manager->attach('micro', new NotFoundMiddleware());
+        $manager->attach('micro', new CORSMiddleware());
+        $manager->attach('micro', new OptionsResponseMiddleware());
         $this->setEventsManager($manager);
     }
 
@@ -173,8 +173,9 @@ class MicroApp extends Micro
 
         try {
             $namespace = $this->getScans();
-            if(empty($namespace)){
-               throw new RuntimeException(ErrorCode::POST_DATA_NOT_PROVIDED,'Warning: controllerNamespace parameters not provided or invalid');
+            if (empty($namespace)) {
+                $error = "Warning: controllerNamespace parameters not provided or invalid";
+                throw new RuntimeException(ErrorCode::POST_DATA_NOT_PROVIDED, $error);
             }
             $dev = $this->getConfig()->application->dev ?? false;
             if ($dev) {
@@ -183,67 +184,70 @@ class MicroApp extends Micro
                 $co->getDefinitions(); //扫描
                 $controllers = ControllerCollector::getCollector();
             } else {
-                $dir = $this->getConfig()->application->cacheDir;
-                $cache = $dir.'controllers.php';
+                $dir = $this->getConfig()->application->controllerCacheDir;
+                $cache = realpath($dir) . DIRECTORY_SEPARATOR . 'controllers.php';
                 if (!file_exists($cache)) {
                     $co = new ControllerAnnotationResource();
                     $co->addScanNamespace($namespace);
                     $co->getDefinitions();//扫描
                     $controllers = ControllerCollector::getCollector();
-                    PhpHelper::saveDataToFile($cache,$controllers);
+                    PhpHelper::saveDataToFile($cache, $controllers);
                 }
                 $controllers = PhpHelper::getDataToFile($cache);
             }
             return $controllers;
-        }catch (\Throwable $t){
-            trigger_error($t->getMessage().$t->getTraceAsString());
-            return[];
+        } catch (\Throwable $t) {
+            trigger_error($t->getMessage() . $t->getTraceAsString());
+            return [];
         }
     }
 
     protected function generateApiDocData()
     {
         $flag = $this->getConfig()->application->doc ?? false;
-        if(!$flag){
+        if (!$flag) {
             return;
         }
-        $path = $this->getConfig()->application->apiDocDir;
-        if(file_exists($path.DataTemplate::FILE_NAME)){
+        $path = realpath($this->getConfig()->application->apiDocDir);
+        if (file_exists($path . DIRECTORY_SEPARATOR . DataTemplate::FILE_NAME)) {
             return;
-        }
-        $data = $this->getControllers();
-        $dataTemplate = new DataTemplate();
-        $projectTemplate=  new ProjectTemplate();
-        foreach ($data as $file=> $collection){
-            if(!isset($collection['points'])){
-                continue;
+        } else {
+            $data = $this->getControllers();
+            $dataTemplate = new DataTemplate();
+            foreach ($data as $file => $collection) {
+                if (!isset($collection['points'])) {
+                    continue;
+                }
+                foreach ($collection['points'] as $method => $point) {
+                    $bean = new DataBean();
+                    $bean->setExamples($point['examples'] ?? []);
+                    $bean->setParameter($point['parameter'] ?? []);
+                    $bean->setFilename($file);
+                    $bean->setGroup($collection['group']);
+                    $bean->setGroupTitle($collection['group']);
+                    $bean->setType(PhpHelper::arrayToLowString($point['method']));
+                    if(isset($point['scopes'])){
+                        $bean->setPermission(['name' => PhpHelper::arrayToLowString($point['scopes'])]);
+                    }
+                    $bean->setUrl($point['path'] ?? '');
+                    $bean->setName($point['name'] ?? '');
+                    $bean->setTitle($point['name'] ?? '');
+                    $bean->setDescription($point['description'] ?? '');
+                    $bean->setVersion($point['version'] ?? '0.0.0');
+                    $dataTemplate->addBeans($bean);
+                }
             }
-            foreach ($collection['points'] as $method=>$point){
-                $bean = new DataBean();
-                $bean->setExamples($point['examples'] ?? []);
-                $bean->setParameter($point['parameter'] ?? []);
-                $bean->setFilename($file);
-                $bean->setGroup($collection['group']);
-                $bean->setGroupTitle($collection['group']);
-                $bean->setType(PhpHelper::arrayToLowString($point['method']));
-                $bean->setPermission(['name'=>PhpHelper::arrayToLowString($point['scopes'])]);
-                $bean->setUrl($point['path']??'');
-                $bean->setName($point['name']??'');
-                $bean->setTitle($point['name']??'');
-                $bean->setDescription($point['description']??'');
-                $bean->setVersion($point['version'] ?? '0.0.0');
-                $dataTemplate->addBeans($bean);
-            }
         }
-        $projectBean = new ProjectBean();
-        $projectBean->setDescription($this->getConfig()->application->description ?? '');
-        $projectBean->setTitle($this->getConfig()->application->title ?? '');
-        $projectBean->setName($this->getConfig()->application->name ?? '');
-        $projectBean->setUrl($this->getConfig()->host->self ?? '');
-        $projectBean->setVersion($this->getConfig()->application->version ?? '0.0.0');
-        $projectTemplate->getTemplate($projectBean,$path);
-        $dataTemplate->getApiDocTemplate($path);
+        if (!file_exists($path . DIRECTORY_SEPARATOR . ProjectTemplate::FILE_NAME)) {
+            $projectTemplate = new ProjectTemplate();
+            $projectBean = new ProjectBean();
+            $projectBean->setDescription($this->getConfig()->application->description ?? '');
+            $projectBean->setTitle($this->getConfig()->application->title ?? '');
+            $projectBean->setName($this->getConfig()->application->name ?? '');
+            $projectBean->setUrl($this->getConfig()->host->self ?? '');
+            $projectBean->setVersion($this->getConfig()->application->version ?? '0.0.0');
+            $projectTemplate->getTemplate($projectBean, $path);
+            $dataTemplate->getApiDocTemplate($path);
+        }
     }
-
-
 }
