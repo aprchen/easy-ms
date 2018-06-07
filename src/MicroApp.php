@@ -208,10 +208,8 @@ class MicroApp extends Micro
         if (!$flag) {
             return;
         }
-        $path = realpath($this->getConfig()->application->apiDocDir);
-        if (file_exists($path . DIRECTORY_SEPARATOR . DataTemplate::FILE_NAME)) {
-            return;
-        } else {
+        $path = realpath($this->getConfig()->application->docDir);
+        if (!file_exists($path . DIRECTORY_SEPARATOR . DataTemplate::FILE_NAME)) {
             $data = $this->getControllers();
             $dataTemplate = new DataTemplate();
             foreach ($data as $file => $collection) {
@@ -237,6 +235,7 @@ class MicroApp extends Micro
                     $dataTemplate->addBeans($bean);
                 }
             }
+            $dataTemplate->getApiDocTemplate($path);
         }
         if (!file_exists($path . DIRECTORY_SEPARATOR . ProjectTemplate::FILE_NAME)) {
             $projectTemplate = new ProjectTemplate();
@@ -247,7 +246,6 @@ class MicroApp extends Micro
             $projectBean->setUrl($this->getConfig()->host->self ?? '');
             $projectBean->setVersion($this->getConfig()->application->version ?? '0.0.0');
             $projectTemplate->getTemplate($projectBean, $path);
-            $dataTemplate->getApiDocTemplate($path);
         }
     }
 }

@@ -20,7 +20,7 @@ class ProjectTemplate
         $f = new Filesystem();
         $head = "define(";
         $foot = ");";
-        $file = $path.self::FILE_NAME;
+        $file = $path.DIRECTORY_SEPARATOR.self::FILE_NAME;
         if($f->exists($file)){
             $f->remove($file);
         }

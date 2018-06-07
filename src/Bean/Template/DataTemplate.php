@@ -37,7 +37,7 @@ class DataTemplate
         $f = new Filesystem();
         $head = "define({ \"api\": [";
         $foot = "] });";
-        $file = $path.self::FILE_NAME;
+        $file = $path.DIRECTORY_SEPARATOR.self::FILE_NAME;
         if($f->exists($file)){
             $f->remove($file);
         }
