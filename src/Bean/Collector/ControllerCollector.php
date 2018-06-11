@@ -12,6 +12,7 @@ namespace EasyMS\Bean\Collector;
 use EasyMS\Bean\Annotation\Cache;
 use EasyMS\Bean\Annotation\Description;
 use EasyMS\Bean\Annotation\Example;
+use EasyMS\Bean\Annotation\Firewall;
 use EasyMS\Bean\Annotation\Group;
 use EasyMS\Bean\Annotation\Param;
 use EasyMS\Bean\Annotation\Point;
@@ -81,6 +82,10 @@ class ControllerCollector implements CollectorInterface
         }
         if($objectAnnotation instanceof Description){
             self::$points[$className][self::POINT_KEY][$methodName]['description'] = $objectAnnotation->getValue();
+            return;
+        }
+        if($objectAnnotation instanceof Firewall){
+            self::$points[$className][self::POINT_KEY][$methodName]['firewall'] = $objectAnnotation->getValue();
             return;
         }
         if($objectAnnotation instanceof Example){

@@ -5,6 +5,7 @@ namespace EasyMS\Bean\Wrapper;
 use EasyMS\Bean\Annotation\Cache;
 use EasyMS\Bean\Annotation\Description;
 use EasyMS\Bean\Annotation\Example;
+use EasyMS\Bean\Annotation\Firewall;
 use EasyMS\Bean\Annotation\Group;
 use EasyMS\Bean\Annotation\Param;
 use EasyMS\Bean\Annotation\Point;
@@ -44,7 +45,8 @@ class ControllerWrapper extends AbstractWrapper
         Cache::class,
         Description::class,
         Scopes::class,
-        Version::class
+        Version::class,
+        Firewall::class
     ];
 
     /**
