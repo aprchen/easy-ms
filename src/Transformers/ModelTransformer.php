@@ -7,7 +7,7 @@
  * Hope deferred makes the heart sick,but desire fulfilled is a tree of life.
  */
 
-namespace App\Transformers\Base;
+namespace EasyMS\Transformers\Base;
 
 use EasyMS\Base\BaseTransformer;
 use Phalcon\Db\Column;
