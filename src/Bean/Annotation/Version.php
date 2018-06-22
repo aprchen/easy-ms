@@ -19,6 +19,14 @@ class Version
 {
     private $value = '0.0.0';
 
+
+    public function __construct(array $values)
+    {
+        if (isset($values['value'])) {
+            $this->value = $values['value'];
+        }
+    }
+
     /**
      * @return string
      */

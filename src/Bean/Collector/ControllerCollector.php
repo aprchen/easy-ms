@@ -69,7 +69,7 @@ class ControllerCollector implements CollectorInterface
             return;
         }
         if($objectAnnotation instanceof Version){
-            self::$points[$className][self::POINT_KEY][$methodName]['version'] = $objectAnnotation->getVersion();
+            self::$points[$className][self::POINT_KEY][$methodName]['version'] = $objectAnnotation->getValue();
             return;
         }
         if($objectAnnotation instanceof Cache){
