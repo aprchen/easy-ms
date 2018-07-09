@@ -37,31 +37,6 @@ class PhpHelper
         return strtolower(implode(',', $array));
     }
 
-
-    public static function saveDataToFile(string $file, array $data)
-    {
-        $f = new Filesystem();
-        if ($f->exists($file)) {
-            $f->remove($file);
-        }
-        $text = '<?php $array =  ' . var_export($data, true) . ';';
-        $f->appendToFile($file, $text);
-    }
-
-
-    public static function getDataToFile(string $file)
-    {
-        $f = new Filesystem();
-        if (!$f->exists($file)) {
-            trigger_error(sprintf("Waring: %s can`t find !"));
-        }
-        include realpath($file);
-        if (isset($array)) {
-            return $array;
-        }
-        return false;
-    }
-
     public static function getExtension(string $filename):string
     {
         return substr(strrchr($filename, '.'), 1);

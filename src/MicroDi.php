@@ -23,6 +23,7 @@ use Phalcon\Di\FactoryDefault;
 use Phalcon\Escaper;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Mvc\Url;
+use Symfony\Component\Filesystem\Filesystem;
 
 class MicroDi extends FactoryDefault
 {
@@ -36,6 +37,7 @@ class MicroDi extends FactoryDefault
         $this->setShared(Services::EVENTS_MANAGER, new EventsManager());
         $this->setShared(Services::PHQL_QUERY_PARSER,new PhqlQueryParser());
         $this->setShared(Services::URL_QUERY_PARSER,new UrlQueryParser());
+        $this->setShared(Services::FILESYSTEM,new Filesystem());
         $this->setShared(Services::ROUTER,function (){
             $router = new Router();
             $router->removeExtraSlashes(true);

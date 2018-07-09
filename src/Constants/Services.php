@@ -38,6 +38,8 @@ class Services
     const VIEWS_CACHE = "viewsCache";
     const ASSETS = "assets";
 
+    const FILESYSTEM = "filesystem";
+
     const AUTH_MANAGER = "authManager";
     const ACL = "acl";
     const TOKEN_PARSER = "tokenParser";

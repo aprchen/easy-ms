@@ -30,6 +30,7 @@ use Phalcon\Config;
 use Phalcon\DiInterface;
 use Phalcon\Events\Manager;
 use Phalcon\Mvc\Micro;
+use Symfony\Component\Filesystem\Filesystem;
 
 class MicroApp extends Micro
 {
@@ -96,8 +97,8 @@ class MicroApp extends Micro
                 $bootstrap = new Boot($this->boots);
                 $bootstrap->run($this, $this->getDI(), $this->getConfig());
             }
-            $this->initRoutes();
-            $this->generateApiDocData();
+            $controllers = $this->getControllers();
+            $this->initRoutes($controllers);
             parent::handle($uri);
             $response = $this->getResponse();
             $returned = $this->getReturnedValue();
@@ -119,31 +120,13 @@ class MicroApp extends Micro
         }
     }
 
-    public static function getEventManager(): Manager
+
+    private function initRoutes(array $controllers)
     {
-        return MicroDi::getDefault()->getShared(Services::EVENTS_MANAGER);
-    }
-
-
-    public function initMiddleware()
-    {
-        /** @var Manager $manager */
-        $manager = $this->getDI()->getShared(Services::EVENTS_MANAGER);
-        $manager->attach('micro', new NotFoundMiddleware());
-        $manager->attach('micro', new CORSMiddleware());
-        $manager->attach('micro', new OptionsResponseMiddleware());
-        $this->setEventsManager($manager);
-    }
-
-
-    private function initRoutes()
-    {
-        $controllers = $this->getControllers();
         /** @var Router $router */
         $router = $this->getDI()->getShared(Services::ROUTER);
         $this->_handlers = $router->initRoutes($controllers);
     }
-
 
     /**
      * @return Response
@@ -170,30 +153,41 @@ class MicroApp extends Micro
      */
     public function getControllers(): array
     {
-
         try {
             $namespace = $this->getScans();
             if (empty($namespace)) {
                 $error = "Warning: controllerNamespace parameters not provided or invalid";
                 throw new RuntimeException(ErrorCode::POST_DATA_NOT_PROVIDED, $error);
             }
-            $dev = $this->getConfig()->application->dev ?? false;
-            if ($dev) {
+            /** @var Filesystem $f */
+            $f = MicroDi::getDefault()->get(Services::FILESYSTEM);
+            $dir = $this->getConfig()->application->controllerCacheDir;
+            if(!$f->exists($dir)){
+                trigger_error(sprintf("Waring: %s directory not exists!",$dir));
+                return [];
+            }
+            $flag = $dir . DIRECTORY_SEPARATOR . 'controllers.lock';
+            $cache = $dir . DIRECTORY_SEPARATOR . 'controllers.php';
+            if($f->exists($flag) && $f->exists($cache)){
+                if (!$f->exists($cache)) {
+                    trigger_error(sprintf("Waring: %s can`t find !"));
+                }
+                include realpath($cache); //引入生成的文件
+                if(!isset($controllers)){
+                    $controllers = [];
+                }
+            }else{
+                if($f->exists($cache)){
+                    $f->remove($cache);
+                }
                 $co = new ControllerAnnotationResource();
                 $co->addScanNamespace($namespace);
-                $co->getDefinitions(); //扫描
+                $co->getDefinitions();//扫描
                 $controllers = ControllerCollector::getCollector();
-            } else {
-                $dir = $this->getConfig()->application->controllerCacheDir;
-                $cache = realpath($dir) . DIRECTORY_SEPARATOR . 'controllers.php';
-                if (!file_exists($cache)) {
-                    $co = new ControllerAnnotationResource();
-                    $co->addScanNamespace($namespace);
-                    $co->getDefinitions();//扫描
-                    $controllers = ControllerCollector::getCollector();
-                    PhpHelper::saveDataToFile($cache, $controllers);
-                }
-                $controllers = PhpHelper::getDataToFile($cache);
+                $text = '<?php $controllers =  ' . var_export($controllers, true) . ';';
+                $f->appendToFile($cache, $text);
+                $f->appendToFile($flag,date("Y-m-d H:i:s",time()));//生成文件锁
+                $this->generateApiDocData($controllers); //生成文档
             }
             return $controllers;
         } catch (\Throwable $t) {
@@ -202,50 +196,54 @@ class MicroApp extends Micro
         }
     }
 
-    protected function generateApiDocData()
+    protected function generateApiDocData(array $data)
     {
         $flag = $this->getConfig()->application->doc ?? false;
         if (!$flag) {
             return;
         }
-        $path = realpath($this->getConfig()->application->docDir);
-        if (!file_exists($path . DIRECTORY_SEPARATOR . DataTemplate::FILE_NAME)) {
-            $data = $this->getControllers();
-            $dataTemplate = new DataTemplate();
-            foreach ($data as $file => $collection) {
-                if (!isset($collection['points'])) {
-                    continue;
-                }
-                foreach ($collection['points'] as $method => $point) {
-                    $bean = new DataBean();
-                    $bean->setExamples($point['examples'] ?? []);
-                    $bean->setParameter($point['parameter'] ?? []);
-                    $bean->setFilename($file);
-                    $bean->setGroup($collection['group']);
-                    $bean->setGroupTitle($collection['group']);
-                    $bean->setType(PhpHelper::arrayToLowString($point['method']));
-                    if(isset($point['scopes'])){
-                        $bean->setPermission(['name' => PhpHelper::arrayToLowString($point['scopes'])]);
-                    }
-                    $bean->setUrl($point['path'] ?? '');
-                    $bean->setName($point['name'] ?? '');
-                    $bean->setTitle($point['name'] ?? '');
-                    $bean->setDescription($point['description'] ?? '');
-                    $bean->setVersion($point['version'] ?? '0.0.0');
-                    $dataTemplate->addBeans($bean);
-                }
+        /** @var Filesystem $f */
+        $f = MicroDi::getDefault()->get(Services::FILESYSTEM);
+        $dir = $this->getConfig()->application->docDir;
+        if(!$f->exists($dir)){
+            trigger_error(sprintf("Waring:  %s directory not exists!",$dir));
+            return;
+        }
+        if($f->exists($dir . DIRECTORY_SEPARATOR . DataTemplate::FILE_NAME)){
+            $f->remove($dir . DIRECTORY_SEPARATOR . DataTemplate::FILE_NAME);
+        }
+        $dataTemplate = new DataTemplate();
+        foreach ($data as $file => $collection) {
+            if (!isset($collection['points'])) {
+                continue;
             }
-            $dataTemplate->getApiDocTemplate($path);
+            foreach ($collection['points'] as $method => $point) {
+                $bean = new DataBean();
+                $bean->setExamples($point['examples'] ?? []);
+                $bean->setParameter($point['parameter'] ?? []);
+                $bean->setFilename($file);
+                $bean->setGroup($collection['group']);
+                $bean->setGroupTitle($collection['group']);
+                $bean->setType(PhpHelper::arrayToLowString($point['method']));
+                if(isset($point['scopes'])){
+                    $bean->setPermission(['name' => PhpHelper::arrayToLowString($point['scopes'])]);
+                }
+                $bean->setUrl($point['path'] ?? '');
+                $bean->setName($point['name'] ?? '');
+                $bean->setTitle($point['name'] ?? '');
+                $bean->setDescription($point['description'] ?? '');
+                $bean->setVersion($point['version'] ?? '0.0.0');
+                $dataTemplate->addBeans($bean);
+            }
         }
-        if (!file_exists($path . DIRECTORY_SEPARATOR . ProjectTemplate::FILE_NAME)) {
-            $projectTemplate = new ProjectTemplate();
-            $projectBean = new ProjectBean();
-            $projectBean->setDescription($this->getConfig()->application->description ?? '');
-            $projectBean->setTitle($this->getConfig()->application->title ?? '');
-            $projectBean->setName($this->getConfig()->application->name ?? '');
-            $projectBean->setUrl($this->getConfig()->host->self ?? '');
-            $projectBean->setVersion($this->getConfig()->application->version ?? '0.0.0');
-            $projectTemplate->getTemplate($projectBean, $path);
-        }
+        $dataTemplate->getApiDocTemplate($dir);
+        $projectTemplate = new ProjectTemplate();
+        $projectBean = new ProjectBean();
+        $projectBean->setDescription($this->getConfig()->application->description ?? '');
+        $projectBean->setTitle($this->getConfig()->application->title ?? '');
+        $projectBean->setName($this->getConfig()->application->name ?? '');
+        $projectBean->setUrl($this->getConfig()->host->self ?? '');
+        $projectBean->setVersion($this->getConfig()->application->version ?? '0.0.0');
+        $projectTemplate->getTemplate($projectBean, $dir);
     }
 }

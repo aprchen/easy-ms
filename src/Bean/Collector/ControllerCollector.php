@@ -59,12 +59,12 @@ class ControllerCollector implements CollectorInterface
             self::$points[$className][self::POINT_KEY][$methodName]['name'] = $objectAnnotation->getName();
             $prefix = self::$points[$className]['prefix'] ?? '';
             $uri = $objectAnnotation->getPath() ?? '/';
-//            if($prefix !== '' && $uri == '/'){
-//                $url = $prefix;
-//            }else{
-//                $url =$prefix.$uri;
-//            }
-            $url = PhpHelper::replaceDoubleSlashes($prefix.$uri);
+            if($prefix !== '' && $uri == '/'){
+                $url = $prefix;
+            }else{
+                $url =$prefix.$uri;
+            }
+            $url = PhpHelper::replaceDoubleSlashes($url);
             self::$points[$className][self::POINT_KEY][$methodName]['path'] = $url;
             return;
         }
