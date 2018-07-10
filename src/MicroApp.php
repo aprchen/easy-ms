@@ -186,7 +186,7 @@ class MicroApp extends Micro
                 $controllers = ControllerCollector::getCollector();
                 $text = '<?php $controllers =  ' . var_export($controllers, true) . ';';
                 $f->appendToFile($cache, $text);
-                $f->appendToFile($flag,date("Y-m-d H:i:s",time()));//生成文件锁
+                $f->appendToFile($flag,'');//生成文件锁
                 $this->generateApiDocData($controllers); //生成文档
             }
             return $controllers;
